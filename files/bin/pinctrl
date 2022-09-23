@@ -1,0 +1,153 @@
+#!/bin/bash
+# This shell script used to control GPIO port on MaaXBoard-8ULP
+
+direction=out
+sysdir=/sys/class/gpio/
+pinbase=128
+groupin=32
+
+pinnum=
+pindir=
+action=
+
+set -u
+
+function usage()
+{
+   echo "Show pinmap Usage: $0 [-v]"
+   echo "Output set  Usage: $0 PE_6 [1/0]"
+   echo "Input read  Usage: $0 [-i] PF_7"
+   echo "Unexport    Usage: $0 [-u] PF_7"
+   exit;
+}
+
+function show_pinmap()
+{
+   echo "
+ +--------------------+-MaaXBoard-+--------------------+
+ |      Name/GPIO     |  Physical |      Name/GPIO     |
+ +--------------------+-----++----+--------------------+
+ |        3.3v        |   1 ||  2 |         5v         |
+ |      SDA4(PTF9)    |   3 ||  4 |         5v         |
+ |      SCL4(PTF8)    |   5 ||  6 |        GND         |
+ |     GPIO(PTD14)    |   7 ||  8 |     TXD4(PTF10)    |
+ |        GND         |   9 || 10 |     RXD4(PTF11)    |
+ |     GPIO(PTD22)    |  11 || 12 |     GPIO(PTF25)    |
+ |     GPIO(PTD21)    |  13 || 14 |        GND         |
+ |     GPIO(PTD20)    |  15 || 16 |     GPIO(PTD15)    |
+ |        3.3v        |  17 || 18 |     GPIO(PTD16)    |
+ |  SPI5_MOSI(PTF16)  |  19 || 20 |        GND         |
+ |  SPI5_MISO(PTF17)  |  21 || 22 |     GPIO(PTF3)     |
+ |  SPI5_CLK(PTF18)   |  23 || 24 |   SPI5_SS0(PTF19)  |
+ |        GND         |  25 || 26 |     GPIO(PTF4)     |
+ |     SDA7(PTE13)    |  27 || 28 |     SCL7(PTE12)    |
+ |     GPIO(PTF1)     |  29 || 30 |        GND         |
+ |     GPIO(PTF2)     |  31 || 32 |     GPIO(PTD17)    |
+ |     GPIO(PTD19)    |  33 || 34 |        GND         |
+ |     GPIO(PTF31)    |  35 || 36 |     GPIO(PTF5)     |
+ |     GPIO(PTF0)     |  37 || 38 |     GPIO(PTF6)     |
+ |        GND         |  39 || 40 |     GPIO(PTD18)    |
+ +--------------------+-----++----+--------------------+
+ |      Name/GPIO     |  Physical |      Name/GPIO     |
+ +--------------------+-MaaXBoard-+--------------------+
+ "
+   exit 0;
+}
+
+function calc_pinum()
+{
+   pinstr=$1
+
+   # PA~PC is on Cortex-M and PD~PF is on Cortex-A
+   group=`echo $pinstr | cut -d_ -f1 | tr a-z A-Z`
+   group=${group:1:1}
+   let group=0x${group}
+
+   if [ $group -lt 13 -o $group -gt 15 ] ; then
+      echo "ERROR: Port group should be PD/PE/PF"
+      echo ""
+      exit;
+   fi
+
+   group=`expr $group - 13`
+
+   pin=`echo $pinstr | cut -d_ -f2 | tr -cd "[0-9]"`
+   
+   pinum=`expr $group \* $groupin + $pin + $pinbase`
+   pindir=$sysdir/gpio$pinum
+
+   #echo "INFO: GPIO $pinstr map to pinum[$pinum]"
+}
+
+function export_gpio()
+{
+    if [ -e $pindir ] ; then
+       return ;
+    fi
+
+    echo $pinum > $sysdir/export
+}
+
+function unexport_gpio()
+{
+    if [ ! -e $pindir ] ; then
+       return ;
+    fi
+
+    echo $pinum > $sysdir/unexport
+}
+
+function set_gpio()
+{
+    echo out > $pindir/direction
+    echo $1 > $pindir/value
+}
+
+function read_gpio()
+{
+    echo in > $pindir/direction
+    cat $pindir/value
+}
+
+if [ $# -lt 1 ] ; then
+   usage;
+fi
+
+while getopts "iuvh" OPTNAME
+do
+    case "${OPTNAME}" in
+        "i")
+           direction=in
+           shift
+           ;;
+
+        "u")
+           action=unexport;
+           shift
+           ;;
+
+        "v")
+           show_pinmap;
+           shift
+           ;;
+
+        "h")
+           usage;
+           ;;
+    esac
+done
+
+calc_pinum $1
+
+if [[ $action == unexport ]] ; then
+   unexport_gpio
+   exit;
+fi
+
+export_gpio
+
+if [ $direction == in ] ; then
+   read_gpio
+else
+   set_gpio $2
+fi
