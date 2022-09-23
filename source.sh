@@ -34,6 +34,8 @@ function setup_build_env()
     export BOARD=`jq -r ".common.board" $CONF_FILE`
     export BSP_VERSION=`jq -r ".common.bsp" $CONF_FILE`
     export CROSSTOOL=`jq -r ".common.crosstool" $CONF_FILE`
+    export ARCH=arm64
+    export CROSS_COMPILE=${CROSSTOOL}
 
     # working path
     export BL_PATH=$BD_PATH/bootloader
