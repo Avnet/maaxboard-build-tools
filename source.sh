@@ -47,7 +47,6 @@ function setup_build_env()
     alias cdbl='cd $BL_PATH'
     alias cdkr='cd $KR_PATH'
     alias cdfs='cd $FS_PATH'
-    alias cdyc='cd $YC_PATH'
     alias cdbd='cd $BD_PATH'
     alias cdimg='cd $IMG_PATH'
     alias cdtool='cd $TOOLS_PATH'
@@ -55,7 +54,6 @@ function setup_build_env()
     mkdir -p $BL_PATH
     mkdir -p $KR_PATH
     mkdir -p $FS_PATH
-    mkdir -p $YC_PATH
     mkdir -p $IMG_PATH
     mkdir -p $TMP_PATH
 
