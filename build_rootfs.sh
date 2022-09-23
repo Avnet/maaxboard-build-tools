@@ -44,6 +44,7 @@ function do_install()
     cp $TOOLS_PATH/files/boot/* $TMP_PATH/boot
 
     # install linux kernel modules
+    rm -rf $FS_PATH/rootfs/lib/modules/[1-9].*.*-*
     cp -af $TMP_PATH/lib/modules $FS_PATH/rootfs/lib/
 
     # install bin files
