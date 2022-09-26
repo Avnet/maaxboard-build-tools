@@ -69,7 +69,7 @@ Codename:       focal
     {
         "board":"maaxboard-8ulp",
         "bsp":"5.15.5-1.0.0",
-        "crosstool":"aarch64-linux-gnu-"
+        "crosstool":"/path/to/aarch64-none-linux-gnu-"
     },
 ```
 
@@ -83,7 +83,7 @@ Codename:       focal
 
 1. ***board*** should be ***maaxboard-8ulp*** for MaaXBoard-8ULP;
 2. ***bsp*** only support ***5.15.5-1.0.0*** till now;
-4. **crosstool**  ***aarch64-linux-gnu-*** will be installed by ***avnet_tools/setup_tools.sh***
+4. **crosstool**  will be installed by ***avnet_tools/setup_tools.sh***
 
 
 

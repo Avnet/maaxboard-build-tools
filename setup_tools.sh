@@ -63,7 +63,7 @@ function install_crosstool()
     # NXP document suggest cross compiler from ARM Developer
     #   https://developer.arm.com/downloads/-/arm-gnu-toolchain-downloads
 
-    pr_info "start downalod cross compiler from ARM Developer"
+    pr_info "start download cross compiler from ARM Developer"
 
     if [ ! -s $ARMTOOL_NAME.tar.xz ] ; then
         wget $ARMTOOL_URL/$ARMTOOL_NAME.tar.xz
