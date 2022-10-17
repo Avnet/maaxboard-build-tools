@@ -25,13 +25,12 @@ function install_systools()
 
     pr_info "start apt install system tools(commands)"
 
-    systools="coreutils jq wget curl tree gawk sed unzip cpio lz4 lzop zstd rsync kmod kpartx \
+    systools="coreutils jq wget curl tree gawk sed unzip cpio bc lzop zstd rsync kmod kpartx \
         desktop-file-utils iputils-ping xterm diffstat chrpath asciidoc docbook-utils help2man \
         build-essential gcc g++ make cmake automake groff socat flex texinfo bison texi2html \
-        bc git cvs subversion mercurial autoconf autoconf-archive \
+        git cvs subversion mercurial autoconf autoconf-archive parted dosfstools \
         python3 python3-pip python3-pexpect python3-git python3-jinja2 \
-        lib32z1 libssl-dev libncurses-dev lib32ncurses-dev libgl1-mesa-dev libglu1-mesa-dev \
-        libsdl1.2-dev "
+        lib32z1 libssl-dev libncurses-dev libgl1-mesa-dev libglu1-mesa-dev libsdl1.2-dev "
 
     apt update > /dev/null 2>&1
     apt install -y $systools
