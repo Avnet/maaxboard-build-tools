@@ -64,6 +64,16 @@ function install_crosstool()
     CortexA_URL=https://developer.arm.com/-/media/Files/downloads/gnu-a/$ARMTOOL_VER/binrel/
     CortexA_NAME=gcc-arm-$ARMTOOL_VER
 
+    # Crosstool for Cortex-M/A from Ubuntu official apt repository
+    if command -v arm-none-eabi-gcc > /dev/null 2>&1 ; then
+        pr_info "Cortex-M crosstool arm-none-eabi-gcc installed already, skip it"
+    else
+        pr_info "start install cross compiler from apt repository for Cortex-M/A core"
+        apt install -y gcc-arm-none-eabi gcc-aarch64-linux-gnu g++-aarch64-linux-gnu
+        arm-none-eabi-gcc -v
+    fi
+
+    # Crosstool for Cortex-A download from ARM Developer
     if [ -d /opt/$CortexA_NAME ]  ; then
         pr_info "Cortex-A crosstool $CortexA_NAME installed already, skip it"
     else
@@ -80,15 +90,6 @@ function install_crosstool()
         /opt/$CortexA_NAME/bin/aarch64-none-linux-gnu-gcc -v
         pr_info "cross compiler for Cortex-A installed to \"/opt/$CortexA_NAME\" successfully"
     fi
-
-    # Cross compiler from Ubuntu official apt repository
-    if command -v arm-none-eabi-gcc > /dev/null 2>&1 ; then
-        pr_info "Cortex-M crosstool arm-none-eabi-gcc installed already, skip it"
-	else
-		pr_info "start install cross compiler from apt repository for Cortex-M/A core"
-		apt install -y gcc-arm-none-eabi gcc-aarch64-linux-gnu g++-aarch64-linux-gnu
-		arm-none-eabi-gcc -v
-	fi
 }
 
 echo ""
