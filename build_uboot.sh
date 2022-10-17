@@ -60,10 +60,7 @@ function build_cortexM()
     cd $BL_PATH/${SRC}
     cd boards/evkmimx8ulp/multicore_examples/rpmsg_lite_str_echo_rtos/armgcc
 
-    # ARMGCC_DIR need remove bin/aarch64-linux-gnu-gcc from path
-    CROSSTOOL_PATH=`which arm-none-eabi-gcc`
-    CROSSTOOL_PATH=`dirname $CROSSTOOL_PATH`
-    export ARMGCC_DIR=`dirname $CROSSTOOL_PATH`
+    export ARMGCC_DIR=$CM33TOOL
 
     if [ ! -s release/rpmsg_lite_str_echo_rtos.bin ] ; then
         bash build_release.sh

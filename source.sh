@@ -33,7 +33,8 @@ function setup_build_env()
     export CONF_FILE=${TOOLS_PATH}/config.json
     export BOARD=`jq -r ".common.board" $CONF_FILE`
     export BSP_VERSION=`jq -r ".common.bsp" $CONF_FILE`
-    export CROSSTOOL=`jq -r ".common.crosstool" $CONF_FILE`
+    export CROSSTOOL=`jq -r ".common.cortexAtool" $CONF_FILE`
+    export CM33TOOL=`jq -r ".common.cortexMtool" $CONF_FILE`
     export ARCH=arm64
     export CROSS_COMPILE=${CROSSTOOL}
 

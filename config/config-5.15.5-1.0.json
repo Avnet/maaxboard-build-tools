@@ -3,7 +3,8 @@
     {
         "board":"maaxboard-8ulp",
         "bsp":"5.15.5-1.0.0",
-        "crosstool":"/opt/gcc-arm-10.3-2021.07/bin/aarch64-none-linux-gnu-"
+        "cortexAtool":"/opt/gcc-arm-10.3-2021.07/bin/aarch64-none-linux-gnu-",
+        "cortexMtool":"/opt/gcc-arm-none-eabi-10.3-2021.07/"
     },
     "image":
     {
