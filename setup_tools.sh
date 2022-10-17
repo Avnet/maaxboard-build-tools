@@ -28,8 +28,8 @@ function install_systools()
     systools="coreutils jq wget curl tree gawk sed unzip cpio lz4 lzop zstd rsync kmod kpartx \
     desktop-file-utils iputils-ping xterm diffstat chrpath asciidoc docbook-utils help2man \
         build-essential gcc g++ make cmake automake groff socat flex texinfo bison texi2html \
-        git cvs subversion mercurial autoconf autoconf-archive \
-        python python3 python3-pip python3-pexpect python-pysqlite2 python3-git python3-jinja2 \
+        bc git cvs subversion mercurial autoconf autoconf-archive \
+        python3 python3-pip python3-pexpect python3-git python3-jinja2 \
         lib32z1 libssl-dev libncurses-dev lib32ncurses-dev libgl1-mesa-dev libglu1-mesa-dev \
     libsdl1.2-dev "
 
