@@ -26,61 +26,77 @@ function install_systools()
     pr_info "start apt install system tools(commands)"
 
     systools="coreutils jq wget curl tree gawk sed unzip cpio lz4 lzop zstd rsync kmod kpartx \
-	desktop-file-utils iputils-ping xterm diffstat chrpath asciidoc docbook-utils help2man \
+    desktop-file-utils iputils-ping xterm diffstat chrpath asciidoc docbook-utils help2man \
         build-essential gcc g++ make cmake automake groff socat flex texinfo bison texi2html \
         git cvs subversion mercurial autoconf autoconf-archive \
         python python3 python3-pip python3-pexpect python-pysqlite2 python3-git python3-jinja2 \
         lib32z1 libssl-dev libncurses-dev lib32ncurses-dev libgl1-mesa-dev libglu1-mesa-dev \
-	libsdl1.2-dev "
+    libsdl1.2-dev "
 
     apt update > /dev/null 2>&1
     apt install -y $systools
 }
 
-function install_crosstool()
-{
-    ARMTOOL_VER=11.2-2022.02
-    ARMTOOL_URL=https://developer.arm.com/-/media/Files/downloads/gnu/$ARMTOOL_VER/binrel/
-    ARMTOOL_NAME=gcc-arm-$ARMTOOL_VER-x86_64-aarch64-none-linux-gnu
 
-    if [ -d /opt/$ARMTOOL_NAME ]  ; then
+function install_devtools()
+{
+    if command -v debootstrap > /dev/null 2>&1 ; then
         pr_info "All development tools already installed, skip it"
         return 0;
     fi
 
     pr_info "start apt install devlopment tools(commands)"
 
-    devtools="u-boot-tools mtd-utils device-tree-compiler binfmt-support qemu qemu-user-static \
-	    debootstrap debian-archive-keyring "
+    devtools="u-boot-tools mtd-utils device-tree-compiler binfmt-support \
+                qemu qemu-user-static debootstrap debian-archive-keyring "
 
-    cortexM_tool="gcc-arm-none-eabi"
+    apt install -y $devtools
+}
 
-    # Cross compiler from Ubuntu official apt repository
-    #cortexA_tool="gcc-aarch64-linux-gnu"
 
-    apt install -y $devtools $cortexM_tool $cortexA_tool
+# NXP document suggest cross compiler from ARM Developer:
+#   https://developer.arm.com/downloads/-/arm-gnu-toolchain-downloads
+function install_crosstool()
+{
+    ARMTOOL_VER=10.3-2021.07
 
-    # NXP document suggest cross compiler from ARM Developer
-    #   https://developer.arm.com/downloads/-/arm-gnu-toolchain-downloads
+    CortexA_PACK=gcc-arm-$ARMTOOL_VER-`uname -p`-aarch64-none-linux-gnu
+    CortexA_URL=https://developer.arm.com/-/media/Files/downloads/gnu-a/$ARMTOOL_VER/binrel/
+    CortexA_NAME=gcc-arm-$ARMTOOL_VER
 
-    pr_info "start download cross compiler from ARM Developer"
+    if [ -d /opt/$CortexA_NAME ]  ; then
+        pr_info "Cortex-A crosstool $CortexA_NAME installed already, skip it"
+    else
+        pr_info "start download cross compiler from ARM Developer for Cortex-A core"
+        if [ ! -s $CortexA_PACK.tar.xz ] ; then
+            wget $CortexA_URL/$CortexA_PACK.tar.xz
+        fi
 
-    if [ ! -s $ARMTOOL_NAME.tar.xz ] ; then
-        wget $ARMTOOL_URL/$ARMTOOL_NAME.tar.xz
+        tar -xJf $CortexA_PACK.tar.xz -C /opt
+        rm -f $CortexA_PACK.tar.xz
+
+        mv /opt/$CortexA_PACK /opt/$CortexA_NAME
+
+        /opt/$CortexA_NAME/bin/aarch64-none-linux-gnu-gcc -v
+        pr_info "cross compiler for Cortex-A installed to \"/opt/$CortexA_NAME\" successfully"
     fi
 
-    tar -xJf $ARMTOOL_NAME.tar.xz -C /opt
-    rm -f $ARMTOOL_NAME.tar.xz
-
-    /opt/$ARMTOOL_NAME/bin/aarch64-none-linux-gnu-gcc -v
-    pr_info "cross compiler installed to \"/opt/$ARMTOOL_NAME\" successfully"
+    # Cross compiler from Ubuntu official apt repository
+    if command -v arm-none-eabi-gcc > /dev/null 2>&1 ; then
+        pr_info "Cortex-M crosstool arm-none-eabi-gcc installed already, skip it"
+	else
+		pr_info "start install cross compiler from apt repository for Cortex-M/A core"
+		apt install -y gcc-arm-none-eabi gcc-aarch64-linux-gnu g++-aarch64-linux-gnu
+		arm-none-eabi-gcc -v
+	fi
 }
 
 echo ""
-
 set -e
 
 install_systools
+
+install_devtools
 
 install_crosstool
 

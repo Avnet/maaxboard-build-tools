@@ -3,7 +3,7 @@
     {
         "board":"maaxboard-8ulp",
         "bsp":"5.15.5-1.0.0",
-        "crosstool":"/opt/gcc-arm-11.2-2022.02-x86_64-aarch64-none-linux-gnu/bin/aarch64-none-linux-gnu-"
+        "crosstool":"/opt/gcc-arm-10.3-2021.07/bin/aarch64-none-linux-gnu-"
     },
     "image":
     {
