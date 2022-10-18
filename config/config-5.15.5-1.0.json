@@ -24,6 +24,11 @@
         "name":"linux-imx.git",
         "branch":"maaxboard_lf-${BSP_VERSION}"
     },
+    "mwifiex":
+    {
+        "url":"https://source.codeaurora.org/external/imx/mwifiex",
+        "branch":"lf-${BSP_VERSION}"
+    },
     "uboot-imx":
     {
         "name":"uboot-imx.git",

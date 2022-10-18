@@ -11,25 +11,27 @@ set -e
 
 function do_fetch()
 {
-    SRC=linux-imx
-
     cd $KR_PATH
 
-    if [ -d $SRC ] ; then
-        pr_info "$SRC fetched already"
-        return;
-    fi
+    SRCS="linux-imx mwifiex"
+    for src in $SRCS
+    do
+        if [ -d $src ] ; then
+            pr_info "$src fetched already"
+            continue
+        fi
 
-    pr_info "start fetch $SRC source code"
-    do_fetch_git $SRC
+        pr_info "start fetch $src source code"
+        do_fetch_git $src
+    done
 }
 
 function do_build()
 {
-    SRC=linux-imx
+    KERNEL=linux-imx
 
-    pr_warn "start build $SRC"
-    cd $KR_PATH/${SRC}
+    pr_warn "start build $KERNEL"
+    cd $KR_PATH/${KERNEL}
 
     export ARCH=arm64
     export CROSS_COMPILE=${CROSSTOOL}
@@ -37,22 +39,31 @@ function do_build()
     if [ ! -f .config ] ; then
         make ARCH=${ARCH} maaxboard_8ulp_defconfig
     fi
-
     make -j${JOBS} CROSS_COMPILE=${CROSSTOOL} ARCH=${ARCH}
+
+    pr_warn "start build wireless module driver"
+    cd $KR_PATH/mwifiex/mxm_wifiex/wlan_src/
+    make -j${JOBS} CROSS_COMPILE=${CROSSTOOL} ARCH=${ARCH} KERNELDIR=$KR_PATH/${KERNEL}
 }
 
 function do_install()
 {
-    pr_warn "start install linux kernel image and drivers"
-    cd $KR_PATH/linux-imx
-
     export ARCH=arm64
     export CROSS_COMPILE=${CROSSTOOL}
 
+    pr_warn "remove old modules in $TMP_PATH"
     rm -rf $TMP_PATH/lib/modules
+
+    pr_warn "start install linux kernel image and drivers"
+    cd $KR_PATH/linux-imx
     make modules_install INSTALL_MOD_PATH=$TMP_PATH INSTALL_MOD_STRIP=1
 
+    pr_warn "start install wireless driver"
+    cd $KR_PATH/mwifiex/mxm_wifiex/wlan_src/
+    make -C $KR_PATH/${KERNEL} M=$PWD CROSS_COMPILE=${CROSSTOOL} ARCH=${ARCH} modules_install INSTALL_MOD_PATH=$TMP_PATH INSTALL_MOD_STRIP=1
+
     set -x
+    cd $KR_PATH/linux-imx
     mkdir -p $TMP_PATH/boot/overlays
     cp arch/arm64/boot/Image $TMP_PATH/boot/
     cp arch/arm64/boot/dts/freescale/${BOARD}.dtb $TMP_PATH/boot/
