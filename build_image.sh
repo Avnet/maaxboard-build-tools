@@ -21,7 +21,7 @@
 SCRIPT_PATH=`realpath ${BASH_SOURCE[0]}`
 export TOOLS_PATH=`dirname $SCRIPT_PATH`
 export PJ_PATH=`realpath ${TOOLS_PATH}/../`
-export BD_PATH=$PJ_PATH/build
+export BD_PATH=$PJ_PATH/work
 export FS_PATH=$BD_PATH/rootfs
 export IMG_PATH=$BD_PATH/images
 export TMP_PATH=$BD_PATH/tmp

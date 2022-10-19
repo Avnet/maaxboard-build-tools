@@ -27,7 +27,7 @@ function setup_build_env()
     export PJ_PATH=`realpath ${SCRIPT_PATH}/../`
 
     # build directory
-    export BD_PATH=$PJ_PATH/build
+    export BD_PATH=$PJ_PATH/work
 
     # configure file
     export CONF_FILE=${TOOLS_PATH}/config.json
