@@ -16,7 +16,7 @@ INST_PATH=$PRJ_PATH/install
 CONF_FILE=$TOP_PATH/config.json
 
 # Download path
-DL_PATH="/srv/ftp/yocto/oe-sources-langdale/"
+#DL_PATH="/srv/ftp/yocto/oe-sources-langdale/"
 
 # shell script will exit once get command error
 set -e
