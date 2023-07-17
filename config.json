@@ -1,0 +1,17 @@
+{
+    "bsp":
+    {
+        "board":"maaxboard",
+        "version":"lf-6.1.1-1.0.0",
+        "giturl":"https://github.com/Avnet/",
+        "crosstool":"/opt/gcc-arm-10.3-2021.07/bin/aarch64-none-linux-gnu-",
+        "mcoretool":"/opt/gcc-arm-none-eabi-10.3-2021.07/"
+    },
+    "system":
+    {
+        "distro":"yocto",
+        "version":"langdale",
+        "imgsize":"5120",
+        "bootsize":"100"
+    }
+}
