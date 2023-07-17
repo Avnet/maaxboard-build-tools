@@ -1,0 +1,120 @@
+#!/bin/bash
+# This shell script used mount/umount an linux system image and update it
+
+mnt_boot=boot
+mnt_root=rootfs
+
+function mount_image()
+{ 
+    img_file=$1 
+    loop_dev=`losetup  -f | cut -d/ -f3`
+
+    if [ ! -s $img_file ] ; then 
+        echo "ERROR: $img_file not found!" 
+        exit 1; 
+    fi 
+
+    if [ -z $loop_dev ] ; then 
+        echo "ERROR: loop dev not found!"
+        exit 2;
+    fi 
+
+    echo "INFO: losetup /dev/${loop_dev} ${img_file}"
+    losetup /dev/${loop_dev} ${img_file}
+    if [ $? != 0 ] ; then 
+        echo "ERROR: losetup /dev/${loop_dev} ${img_file} failed!" 
+        exit 3; 
+    fi
+
+    echo "INFO: kpartx -av /dev/${loop_dev}"
+    kpartx -av /dev/${loop_dev}
+
+    echo "INFO: mount ${mnt_boot} ${mnt_root}"
+    mkdir -p ${mnt_boot} ${mnt_root}
+    mount /dev/mapper/${loop_dev}p1 ${mnt_boot}
+    mount /dev/mapper/${loop_dev}p2 ${mnt_root}
+
+    echo "INFO: mount $img_file done."
+}
+
+function umount_image()
+{
+    img_file=$1 
+
+    mountpoint $mnt_boot > /dev/null 2>&1
+    if [ $? == 0 ] ; then
+        echo "INFO: umount ${mnt_boot}"
+        umount ${mnt_boot}
+        rmdir  ${mnt_boot}
+    fi
+
+    mountpoint $mnt_root > /dev/null 2>&1
+    if [ $? == 0 ] ; then
+        echo "INFO: umount ${mnt_root}"
+        umount ${mnt_root}
+        rmdir  ${mnt_root}
+    fi
+
+    # loop_dev should be 'loopX' such as 'loop9'.
+    loop_dev=`losetup -a | grep $img_file| cut -d: -f1 | cut -d/ -f3`
+    if [[ -z $loop_dev ]] ; then
+        exit;
+    fi
+
+    if [[ -e /dev/mapper/${loop_dev}p1 ]] ; then
+        echo "INFO: kpartx -dv /dev/${loop_dev}"
+        kpartx -dv /dev/${loop_dev}
+    fi
+
+    echo "INFO: losetup -d /dev/${loop_dev}"
+    losetup -d /dev/${loop_dev}
+
+    echo "INFO: umount $img_file done."
+}
+
+
+function do_usage()
+{
+    echo ""
+    echo "Usage:"
+    echo "  $0 [-m] [-u] image_file"
+    echo "     -m:  mount the image file"
+    echo "     -u: umount the image file"
+    echo ""
+    exit;
+}
+
+action=
+img_file=
+
+while getopts "mu" OPTNAME
+do
+    case "${OPTNAME}" in
+        "m")
+            action=mount
+            ;;  
+
+        "u")
+            action=umount
+            ;;  
+
+        "*")
+            do_usage
+            ;;  
+    esac
+done
+
+shift $(( $OPTIND-1 ))
+img_file=$1
+
+if [[ -z $img_file ]] || [[ -z $action ]] ; then 
+    do_usage
+    exit;
+fi
+
+if [ $action == "mount" ] ; then
+    mount_image $img_file
+elif [ $action == "umount" ] ; then
+    umount_image $img_file
+fi
+
