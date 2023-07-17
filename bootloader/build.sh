@@ -65,8 +65,8 @@ function export_env()
     export BOARD=`jq -r ".bsp.board" $CONF_FILE | tr 'A-Z' 'a-z'`
     export BSP_VER=`jq -r ".bsp.version" $CONF_FILE | tr 'A-Z' 'a-z'`
     export GIT_URL=`jq -r ".bsp.giturl" $CONF_FILE | tr 'A-Z' 'a-z'`
-    export CROSS_COMPILE=`jq -r ".bsp.crosstool" $CONF_FILE | tr 'A-Z' 'a-z'`
-    export MCORE_COMPILE=`jq -r ".bsp.mcoretool" $CONF_FILE | tr 'A-Z' 'a-z'`
+    export CROSS_COMPILE=`jq -r ".bsp.cortexAtool" $CONF_FILE | tr 'A-Z' 'a-z'`
+    export MCORE_COMPILE=`jq -r ".bsp.cortexMtool" $CONF_FILE | tr 'A-Z' 'a-z'`
 
     export SRCS="imx-atf uboot-imx imx-mkimage"
     export BRANCH=maaxboard_$BSP_VER

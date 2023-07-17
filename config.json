@@ -4,8 +4,8 @@
         "board":"maaxboard",
         "version":"lf-6.1.1-1.0.0",
         "giturl":"https://github.com/Avnet/",
-        "crosstool":"/opt/gcc-arm-10.3-2021.07/bin/aarch64-none-linux-gnu-",
-        "mcoretool":"/opt/gcc-arm-none-eabi-10.3-2021.07/"
+        "cortexAtool":"/opt/gcc-arm-10.3-2021.07/bin/aarch64-none-linux-gnu-",
+        "cortexMtool":"/opt/gcc-arm-none-eabi-10.3-2021.07/"
     },
     "system":
     {

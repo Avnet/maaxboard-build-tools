@@ -37,7 +37,7 @@ function export_env()
     export BOARD=`jq -r ".bsp.board" $CONF_FILE | tr 'A-Z' 'a-z'`
     export BSP_VER=`jq -r ".bsp.version" $CONF_FILE | tr 'A-Z' 'a-z'`
     export GIT_URL=`jq -r ".bsp.giturl" $CONF_FILE | tr 'A-Z' 'a-z'`
-    export CROSS_COMPILE=`jq -r ".bsp.crosstool" $CONF_FILE | tr 'A-Z' 'a-z'`
+    export CROSS_COMPILE=`jq -r ".bsp.cortexAtool" $CONF_FILE | tr 'A-Z' 'a-z'`
 
     export BRANCH=maaxboard_$BSP_VER
     export KER_PATH=$PRJ_PATH/linux-imx

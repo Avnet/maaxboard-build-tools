@@ -1,5 +1,5 @@
 #!/bin/bash
-# This shell script used to system tools
+# This shell script used to install system tools
 
 # display in red
 function pr_error() {
