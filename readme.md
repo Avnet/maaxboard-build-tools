@@ -1,6 +1,6 @@
 # 1 Introduction
 
-This project is a build system for MaaXBoard BSP(Board Support Package) developer, it will auto download all the source code and build for it. It also can generate a linux system image, which can be flash into eMMC or TF card and boot up from it. 
+This project is a build system for MaaXBoard BSP(Board Support Package) developer, it will auto download all the source code and build for it. It also can generate a linux system image, which can be flash into eMMC or TF card and boot up from it.
 
 The build system can support:
 
@@ -56,17 +56,17 @@ Below is the build system files.
 Run ***tools/setup_tools.sh*** script as ***root*** to install all the dependent system tools and cross compiler for this build system.
 
 ```
-guowenxue@7eeebdd3d42f:~/maaxboard-8ulp$ sudo ./tools/setup_tools.sh 
+guowenxue@7eeebdd3d42f:~/maaxboard-8ulp$ sudo ./tools/setup_tools.sh
 
- --I-- start apt install system tools(commands) 
- 
+ --I-- start apt install system tools(commands)
+
  --I-- start apt install devlopment tools(commands)
- 
- --I-- start download cross compiler from ARM Developer for Cortex-M core 
- --I-- cross compiler for Cortex-M installed to "/opt/gcc-arm-none-eabi-10.3-2021.07" successfully 
 
- --I-- start download cross compiler from ARM Developer for Cortex-A core 
- --I-- cross compiler for Cortex-A installed to "/opt/gcc-arm-10.3-2021.07" successfully 
+ --I-- start download cross compiler from ARM Developer for Cortex-M core
+ --I-- cross compiler for Cortex-M installed to "/opt/gcc-arm-none-eabi-10.3-2021.07" successfully
+
+ --I-- start download cross compiler from ARM Developer for Cortex-A core
+ --I-- cross compiler for Cortex-A installed to "/opt/gcc-arm-10.3-2021.07" successfully
 ```
 
 
@@ -82,7 +82,7 @@ guowenxue@7eeebdd3d42f:~/maaxboard-8ulp$ sudo ./tools/setup_tools.sh
 ***config.json*** is the default configure file for the build system.
 
 ```
-guowenxue@7eeebdd3d42f:~/maaxboard-8ulp$ cat config.json 
+guowenxue@7eeebdd3d42f:~/maaxboard-8ulp$ cat config.json
 {
     "bsp":
     {
@@ -134,7 +134,7 @@ guowenxue@7eeebdd3d42f:~/maaxboard-8ulp$ cat config.json
 Modify the board name to ***maaxboard-8ulp***.  And you can modify some other options as your requirement, such as git repository URL.
 
 ```
-guowenxue@7eeebdd3d42f:~/maaxboard-8ulp$ vim config.json 
+guowenxue@7eeebdd3d42f:~/maaxboard-8ulp$ vim config.json
 {
     "bsp":
     {
@@ -145,11 +145,11 @@ guowenxue@7eeebdd3d42f:~/maaxboard-8ulp$ vim config.json
 
 
 
-## 4.2 Build bootloader 
+## 4.2 Build bootloader
 
 
 
-You can run below command to start build bootloader. 
+You can run below command to start build bootloader.
 
 ```
 guowenxue@7eeebdd3d42f:~/maaxboard-8ulp$ cd bootloader && ./build.sh
@@ -167,11 +167,11 @@ u-boot-maaxboard-8ulp.imx
 
 
 
-## 4.3 Build kernel 
+## 4.3 Build kernel
 
 
 
-You can run below command to start build linux kernel. 
+You can run below command to start build linux kernel.
 
 ```
 guowenxue@7eeebdd3d42f:~/maaxboard-8ulp$ cd kernel && ./build.sh
@@ -193,7 +193,7 @@ Image  lib  maaxboard-8ulp.dtb  overlays
 
 
 
-You can run below command to start build Yocto. 
+You can run below command to start build Yocto.
 
 ```
 guowenxue@7eeebdd3d42f:~/maaxboard-8ulp$ cd yocto && ./build.sh
@@ -215,20 +215,23 @@ avnet-image-full-maaxboard-8ulp.wic.zst  rootfs.tar.zst  u-boot-maaxboard-8ulp.b
 
 
 
-You can run below command to start generate system image. 
+You can run below command to start generate system image.
 
 ```
 guowenxue@7eeebdd3d42f:~/maaxboard-8ulp$ cd images && sudo ./build.sh
 
 guowenxue@7eeebdd3d42f:~/maaxboard-8ulp/images$ ls
-build.sh  maaxboard-8ulp-lf-6.1.1-1.0.0-langdale.img  rootfs-langdale
+build.sh  install  rootfs-langdale
+
+guowenxue@7eeebdd3d42f:~/maaxboard-8ulp/images$ ls install/
+maaxboard-8ulp-langdale.img  u-boot-maaxboard-8ulp.imx
 ```
 
 * Build system image need **sudo** privilege;
 * It will auto find bootloader image file in **bootloader/install**;
 * It will auto find linux kernle image files in **kernel/install**;
 * It will auto find root file system tarball file in **yocto/install**;
-* The generate output system image will installed to foler ***images*** ;
+* The generate output system image will installed to foler ***images/install*** ;
 
 
 
@@ -240,7 +243,7 @@ You can install the **imgmnt** tool to system patch ***/usr/bin***;
 
 ```
 guowenxue@7eeebdd3d42f:~/maaxboard-8ulp$ sudo cp tools/imgmnt /usr/bin/
-guowenxue@7eeebdd3d42f:~/maaxboard-8ulp$ sudo chmod +x /usr/bin/imgmnt 
+guowenxue@7eeebdd3d42f:~/maaxboard-8ulp$ sudo chmod +x /usr/bin/imgmnt
 ```
 
 
@@ -248,24 +251,24 @@ guowenxue@7eeebdd3d42f:~/maaxboard-8ulp$ sudo chmod +x /usr/bin/imgmnt
 We can mount the system image by **imgmnt** command with **'-m'** option.
 
 ```
-guowenxue@7eeebdd3d42f:~/maaxboard-8ulp/images$ sudo imgmnt -m maaxboard-8ulp-lf-6.1.1-1.0.0-langdale.img 
-INFO: losetup /dev/loop0 maaxboard-8ulp-lf-6.1.1-1.0.0-langdale.img
+guowenxue@7eeebdd3d42f:~/maaxboard-8ulp/images/install$ sudo imgmnt -m maaxboard-8ulp-langdale.img
+INFO: losetup /dev/loop0 maaxboard-8ulp-langdale.img
 INFO: kpartx -av /dev/loop0
 add map loop0p1 (253:0): 0 194560 linear 7:0 20480
 add map loop0p2 (253:1): 0 10270720 linear 7:0 215040
 INFO: mount boot rootfs
-INFO: mount maaxboard-8ulp-lf-6.1.1-1.0.0-langdale.img done.
+INFO: mount maaxboard-8ulp-langdale.img done.
 ```
 
 
 
-It will mount the **boot partition(FAT32)** to ***boot*** folder and  **root file system partition(EXT4)** to ***rootfs*** folder. 
+It will mount the **boot partition(FAT32)** to ***boot*** folder and  **root file system partition(EXT4)** to ***rootfs*** folder.
 
 ```
-guowenxue@7eeebdd3d42f:~/maaxboard-8ulp/images$ ls boot/
+guowenxue@7eeebdd3d42f:~/maaxboard-8ulp/images/install$ ls boot/
 Image  maaxboard-8ulp.dtb  overlays  readme.txt  uEnv.txt
 
-guowenxue@7eeebdd3d42f:~/maaxboard-8ulp/images$ ls rootfs
+guowenxue@7eeebdd3d42f:~/maaxboard-8ulp/images/install$ ls rootfs/
 bin  boot  dev  etc  home  lib  lost+found  media  mnt  opt  proc  run  sbin  srv  sys  tmp  unit_tests  usr  var
 ```
 
@@ -281,13 +284,13 @@ After mount the system image on the linux system, now we can:
 We can unmount the system image by **imgmnt** command with **'-u'** option.
 
 ```
-guowenxue@7eeebdd3d42f:~/maaxboard-8ulp/images$ sudo imgmnt -u maaxboard-8ulp-lf-6.1.1-1.0.0-langdale.img 
+guowenxue@7eeebdd3d42f:~/maaxboard-8ulp/images/install$ sudo imgmnt -u maaxboard-8ulp-langdale.img
 INFO: umount boot
 INFO: umount rootfs
 INFO: kpartx -dv /dev/loop0
 del devmap : loop0p1
 del devmap : loop0p2
 INFO: losetup -d /dev/loop0
-INFO: umount maaxboard-8ulp-lf-6.1.1-1.0.0-langdale.img done.
+INFO: umount maaxboard-8ulp-langdale.img done.
 ```
 

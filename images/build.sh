@@ -128,7 +128,7 @@ function do_fetch()
 
 function build_image()
 {
-    IMAGE_NAME=$BOARD-$BSP_VER-$DIS_VER.img
+    export IMAGE_NAME=$BOARD-$DIS_VER.img
 
     # Uboot size set be 10MB and deployed in 64th sector on eMMC/TFCard
     UBOOT_SIZE=10
@@ -224,6 +224,10 @@ function do_build()
 function do_install()
 {
     cd $PRJ_PATH
+
+    mkdir -p install
+    cp $UBOOT_BINPATH/u-boot-maaxboard-8ulp.imx install
+    mv $IMAGE_NAME install
 }
 
 function do_clean()
