@@ -108,12 +108,12 @@ function do_install()
     cd $YCT_PATH
 
     echo ""
-    pr_info "Yocto(YCT_VER) installed to '$INST_PATH'"
+    pr_info "Yocto($YCT_VER) installed to '$INST_PATH'"
 
     mkdir -p ${INST_PATH}
     cp $BUILD_DIR/tmp/deploy/images/$BOARD/$BB_TARGET-$BOARD-*.rootfs.tar.zst ${INST_PATH}/rootfs.tar.zst
-    cp $BUILD_DIR/tmp/deploy/images/$BOARD/imx-boot ${INST_PATH}/u-boot-${BOARD}.bin
-    chmod a+x ${INST_PATH}/u-boot-${BOARD}.bin
+    cp $BUILD_DIR/tmp/deploy/images/$BOARD/imx-boot ${INST_PATH}/u-boot-${BOARD}.imx
+    chmod a+x ${INST_PATH}/u-boot-${BOARD}.imx
     cp $BUILD_DIR/tmp/deploy/images/$BOARD/$BB_TARGET-$BOARD.wic.zst ${INST_PATH}
 
     ls ${INST_PATH} && echo ""
