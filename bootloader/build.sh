@@ -271,7 +271,7 @@ function build_imxboot()
         cp $FMW_PATH/firmware-imx-*/firmware/ddr/synopsys/ddr4_imem_2d*.bin $MKIMG_BIN_PATH
         cp $FMW_PATH/firmware-imx-*/firmware/ddr/synopsys/ddr4_dmem_2d*.bin $MKIMG_BIN_PATH
 
-    elif [ $BOARD == maaxboard-mini ] ; then
+    elif [ $BOARD == maaxboard-nano ] ; then
 
         cp $FMW_PATH/firmware-imx-*/firmware/ddr/synopsys/ddr4_imem_1d*.bin $MKIMG_BIN_PATH
         cp $FMW_PATH/firmware-imx-*/firmware/ddr/synopsys/ddr4_dmem_1d*.bin $MKIMG_BIN_PATH
