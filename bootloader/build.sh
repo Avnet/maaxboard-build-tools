@@ -259,17 +259,24 @@ function build_imxboot()
     elif [ $BOARD == maaxboard ] ; then
 
         cp $FMW_PATH/firmware-imx-*/firmware/hdmi/cadence/signed_hdmi_imx8m.bin $MKIMG_BIN_PATH
-        cp $FMW_PATH/firmware-imx-*/firmware/ddr/synopsys/ddr4_imem_1d.bin $MKIMG_BIN_PATH
-        cp $FMW_PATH/firmware-imx-*/firmware/ddr/synopsys/ddr4_dmem_1d.bin $MKIMG_BIN_PATH
-        cp $FMW_PATH/firmware-imx-*/firmware/ddr/synopsys/ddr4_imem_2d.bin $MKIMG_BIN_PATH
-        cp $FMW_PATH/firmware-imx-*/firmware/ddr/synopsys/ddr4_dmem_2d.bin $MKIMG_BIN_PATH
+        cp $FMW_PATH/firmware-imx-*/firmware/ddr/synopsys/ddr4_imem_1d*.bin $MKIMG_BIN_PATH
+        cp $FMW_PATH/firmware-imx-*/firmware/ddr/synopsys/ddr4_dmem_1d*.bin $MKIMG_BIN_PATH
+        cp $FMW_PATH/firmware-imx-*/firmware/ddr/synopsys/ddr4_imem_2d*.bin $MKIMG_BIN_PATH
+        cp $FMW_PATH/firmware-imx-*/firmware/ddr/synopsys/ddr4_dmem_2d*.bin $MKIMG_BIN_PATH
 
     elif [ $BOARD == maaxboard-mini ] ; then
 
-        cp $FMW_PATH/firmware-imx-*/firmware/ddr/synopsys/ddr4_imem_1d.bin $MKIMG_BIN_PATH
-        cp $FMW_PATH/firmware-imx-*/firmware/ddr/synopsys/ddr4_dmem_1d.bin $MKIMG_BIN_PATH
-        cp $FMW_PATH/firmware-imx-*/firmware/ddr/synopsys/ddr4_imem_2d.bin $MKIMG_BIN_PATH
-        cp $FMW_PATH/firmware-imx-*/firmware/ddr/synopsys/ddr4_dmem_2d.bin $MKIMG_BIN_PATH
+        cp $FMW_PATH/firmware-imx-*/firmware/ddr/synopsys/ddr4_imem_1d*.bin $MKIMG_BIN_PATH
+        cp $FMW_PATH/firmware-imx-*/firmware/ddr/synopsys/ddr4_dmem_1d*.bin $MKIMG_BIN_PATH
+        cp $FMW_PATH/firmware-imx-*/firmware/ddr/synopsys/ddr4_imem_2d*.bin $MKIMG_BIN_PATH
+        cp $FMW_PATH/firmware-imx-*/firmware/ddr/synopsys/ddr4_dmem_2d*.bin $MKIMG_BIN_PATH
+
+    elif [ $BOARD == maaxboard-mini ] ; then
+
+        cp $FMW_PATH/firmware-imx-*/firmware/ddr/synopsys/ddr4_imem_1d*.bin $MKIMG_BIN_PATH
+        cp $FMW_PATH/firmware-imx-*/firmware/ddr/synopsys/ddr4_dmem_1d*.bin $MKIMG_BIN_PATH
+        cp $FMW_PATH/firmware-imx-*/firmware/ddr/synopsys/ddr4_imem_2d*.bin $MKIMG_BIN_PATH
+        cp $FMW_PATH/firmware-imx-*/firmware/ddr/synopsys/ddr4_dmem_2d*.bin $MKIMG_BIN_PATH
 
     fi
 
