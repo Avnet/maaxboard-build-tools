@@ -226,7 +226,7 @@ function do_install()
     cd $PRJ_PATH
 
     mkdir -p install
-    cp $UBOOT_BINPATH/u-boot-maaxboard-8ulp.imx install
+	cp $UBOOT_BINPATH/u-boot-${BOARD}.imx install
     mv $IMAGE_NAME install
 }
 
