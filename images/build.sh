@@ -93,6 +93,15 @@ function export_env()
     export UBOOT_BINPATH=$TOP_PATH/bootloader/install/
     export KERNEL_BINPATH=$TOP_PATH/kernel/install/
     export ROOTFS_BINPATH=$TOP_PATH/yocto/install/
+    
+
+    if [[ $BOARD = maaxboard ]] || [[ $BOARD = maaxboard-8ulp ]] || [[ $BOARD = maaxboard-mini ]] ; then
+		export UBOOT_OFFSET_SECTOR=66
+    elif [ $BOARD = maaxboard-nano ]  ; then
+		export UBOOT_OFFSET_SECTOR=64
+    fi
+
+	pr_info "UBOOT_OFFSET_SECTOR=${UBOOT_OFFSET_SECTOR}"
 }
 
 function do_fetch()
@@ -132,8 +141,6 @@ function build_image()
 
     # Uboot size set be 10MB and deployed in 64th sector on eMMC/TFCard
     UBOOT_SIZE=10
-    UBOOT_SECTOR=64
-
 
     mkdir -p $MNT_POINT
 
@@ -159,7 +166,7 @@ function build_image()
     sync
 
     pr_info "start install u-boot image"
-    dd if=$UBOOT_BINPATH/u-boot-${BOARD}.imx of=${IMAGE_NAME} bs=512 seek=66 conv=notrunc,sync
+    dd if=$UBOOT_BINPATH/u-boot-${BOARD}.imx of=${IMAGE_NAME} bs=512 seek=${UBOOT_OFFSET_SECTOR} conv=notrunc,sync
 
     pr_info "start install linux kernel images"
     mount -t vfat /dev/mapper/${LOOP_DEV}p1 ${MNT_POINT}
