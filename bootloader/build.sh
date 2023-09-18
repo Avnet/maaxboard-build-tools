@@ -34,7 +34,13 @@ function pr_info() {
 # select firmware version by BSP version
 function export_fmver()
 {
-    if [[ $BSP_VER =~ 6.1.1 ]] ;  then
+    if [[ $BSP_VER =~ 6.1.22 ]] ;  then
+
+        export FMW_IMX=firmware-imx-8.20
+        export FMW_SENTINEL=firmware-sentinel-0.10
+        export FMW_UPOWER=firmware-upower-1.3.0
+
+    elif [[ $BSP_VER =~ 6.1.1 ]] ;  then
 
         export FMW_IMX=firmware-imx-8.19
         # firmware-sentinel-0.9 can not work
@@ -75,10 +81,15 @@ function export_env()
 
     export_fmver
 
+    # Default set A0 silicon for other MaaXBoard(not used).
+    export IMX_SOC_REV=A0
+
     if [ $BOARD == maaxboard-8ulp ] ; then
 
         SRCS="$SRCS mcore_sdk_8ulp"
 
+        # MaaXBoard-8ULP manufacture on 2023.09 using A2 silicon
+        IMX_SOC_REV=A2
         ATF_PLATFORM=imx8ulp
         IMX_BOOT_SOC_TARGET=iMX8ULP
         IMXBOOT_TARGETS=flash_singleboot_m33
@@ -161,6 +172,9 @@ function build_atf()
 
 function build_cortexM()
 {
+    DEMO_PATH=boards/evkmimx8ulp/multicore_examples/rpmsg_lite_str_echo_rtos/armgcc
+    DEMO_BIN=release/rpmsg_lite_str_echo_rtos.bin
+
     if [ $BOARD != maaxboard-8ulp ] ; then
         return ;
     fi
@@ -170,16 +184,17 @@ function build_cortexM()
     pr_warn "start build $SRC"
 
     cd $PRJ_PATH/${SRC}
-    cd boards/evkmimx8ulp/multicore_examples/rpmsg_lite_str_echo_rtos/armgcc
+    cd $DEMO_PATH
 
     export ARMGCC_DIR=$MCORE_COMPILE
 
-    if [ ! -s release/rpmsg_lite_str_echo_rtos.bin ] ; then
+    #bash clean.sh
+    if [ ! -s $DEMO_BIN ] ; then
         bash build_release.sh
     fi
 
     set -x
-    cp release/rpmsg_lite_str_echo_rtos.bin $MKIMG_BIN_PATH/m33_image.bin
+    cp $DEMO_BIN $MKIMG_BIN_PATH/m33_image.bin
     set +x
 }
 
@@ -250,11 +265,16 @@ function build_imxboot()
     pr_warn "start build $SRC"
     cd $PRJ_PATH/${SRC}
 
-
     if [ $BOARD == maaxboard-8ulp ] ; then
 
-        cp $FMW_PATH/firmware-upower-*/upower_a0.bin $MKIMG_BIN_PATH/upower.bin
-        cp $FMW_PATH/firmware-sentinel-*/mx8ulpa0-ahab-container.img $MKIMG_BIN_PATH
+        REV=`echo $IMX_SOC_REV | tr [A-Z] [a-z]`
+        if [ $REV == a2 ] ; then
+            UPOWER_REV=a1
+        else
+            UPOWER_REV=a0
+        fi
+        cp $FMW_PATH/firmware-upower-*/upower_${UPOWER_REV}.bin $MKIMG_BIN_PATH/upower.bin
+        cp $FMW_PATH/firmware-sentinel-*/mx8ulp${REV}-ahab-container.img $MKIMG_BIN_PATH
 
     elif [ $BOARD == maaxboard ] ; then
 
@@ -280,7 +300,8 @@ function build_imxboot()
 
     fi
 
-    make SOC=$IMX_BOOT_SOC_TARGET REV=A0 $IMXBOOT_TARGETS
+    REV=`echo $IMX_SOC_REV | tr [a-z] [A-Z]`
+    make SOC=$IMX_BOOT_SOC_TARGET REV=$REV $IMXBOOT_TARGETS
 
     cp $MKIMG_BIN_PATH/flash.bin u-boot-${BOARD}.imx
     chmod a+x u-boot-${BOARD}.imx
@@ -307,6 +328,11 @@ function do_install()
     echo ""
     pr_info "bootloader installed to '$INST_PATH'"
     ls $INST_PATH && echo ""
+
+    if [ -w /tftp ] ; then
+        pr_info "install bootloader to '/tftp'"
+        cp $INST_PATH/u-boot-${BOARD}.imx /tftp
+    fi
 }
 
 function do_clean()
