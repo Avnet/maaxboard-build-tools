@@ -114,6 +114,12 @@ function do_install()
     echo ""
     pr_info "linux kernel installed to '$INST_PATH'"
     ls $INST_PATH && echo ""
+
+    if [ -w /tftp ] ; then
+        pr_info "install linux kernel to '/tftp'"
+        cp $INST_PATH/Image /tftp
+        cp $INST_PATH/${BOARD}.dtb /tftp
+    fi
 }
 
 function do_build()
