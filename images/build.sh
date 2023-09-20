@@ -96,12 +96,12 @@ function export_env()
     
 
     if [[ $BOARD = maaxboard ]] || [[ $BOARD = maaxboard-8ulp ]] || [[ $BOARD = maaxboard-mini ]] ; then
-		export UBOOT_OFFSET_SECTOR=66
+        export UBOOT_OFFSET_SECTOR=66
     elif [ $BOARD = maaxboard-nano ]  ; then
-		export UBOOT_OFFSET_SECTOR=64
+        export UBOOT_OFFSET_SECTOR=64
     fi
 
-	pr_info "UBOOT_OFFSET_SECTOR=${UBOOT_OFFSET_SECTOR}"
+    pr_info "UBOOT_OFFSET_SECTOR=${UBOOT_OFFSET_SECTOR}"
 }
 
 function do_fetch()
@@ -180,6 +180,8 @@ function build_image()
 
     if [ -f $ROOTFS/boot/uEnv.txt ] ; then
         cp $ROOTFS/boot/uEnv.txt ${MNT_POINT}/
+    elif [ -f $PRJ_PATH/conf/$BOARD/uEnv.txt ] ; then
+        cp $PRJ_PATH/conf/$BOARD/uEnv.txt ${MNT_POINT}/
     fi
 
     sync && umount ${MNT_POINT}
@@ -188,6 +190,14 @@ function build_image()
     rm -rf $ROOTFS/lib/modules/
     mkdir -p $ROOTFS/lib/modules/
     cp -rf $KERNEL_BINPATH/lib/modules/[0-9]*\.[0-9]*\.[0-9]* $ROOTFS/lib/modules/
+
+    if [ -f $PRJ_PATH/conf/$BOARD/asound.conf ] ; then
+        cp $PRJ_PATH/conf/$BOARD/asound.conf $ROOTFS/etc/asound.conf
+    fi
+
+    if [ -f $PRJ_PATH/conf/$BOARD/asound.state ] ; then
+        cp $PRJ_PATH/conf/$BOARD/asound.state $ROOTFS/var/lib/alsa/asound.state
+    fi
 
     pr_info "start install root filesystem"
     mount -t ext4 /dev/mapper/${LOOP_DEV}p2 ${MNT_POINT}
@@ -235,6 +245,12 @@ function do_install()
     mkdir -p install
     cp $UBOOT_BINPATH/u-boot-${BOARD}.imx install
     mv $IMAGE_NAME install
+
+    if [ -w /tftp ] ; then
+        pr_info "install bootloader and system image to '/tftp'"
+        cp $INST_PATH/u-boot-${BOARD}.imx /tftp
+        cp $INST_PATH/$IMAGE_NAME /tftp
+    fi
 }
 
 function do_clean()
