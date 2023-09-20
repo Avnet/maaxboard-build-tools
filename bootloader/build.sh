@@ -195,6 +195,8 @@ function build_cortexM()
 
     set -x
     cp $DEMO_BIN $MKIMG_BIN_PATH/m33_image.bin
+    # For Yocto
+    cp $DEMO_BIN $INST_PATH/maaxboard_8ulp_m33_image.bin
     set +x
 }
 
