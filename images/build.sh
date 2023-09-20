@@ -6,8 +6,11 @@ PRJ_PATH=$(cd $(dirname "${BASH_SOURCE[0]}") && pwd)
 # top project absolute path
 TOP_PATH=$(realpath $PRJ_PATH/..)
 
-# binaries install path
-INST_PATH=$PRJ_PATH/install
+# binaries build prefix install path
+PRFX_PATH=$PRJ_PATH/install
+
+# binaries finally install path if needed
+INST_PATH=/tftp
 
 # config file path
 CONF_FILE=$TOP_PATH/config.json
@@ -242,14 +245,14 @@ function do_install()
 {
     cd $PRJ_PATH
 
-    mkdir -p install
-    cp $UBOOT_BINPATH/u-boot-${BOARD}.imx install
-    mv $IMAGE_NAME install
+    mkdir -p $PRFX_PATH
+    cp $UBOOT_BINPATH/u-boot-${BOARD}.imx $PRFX_PATH
+    mv $IMAGE_NAME $PRFX_PATH
 
-    if [ -w /tftp ] ; then
-        pr_info "install bootloader and system image to '/tftp'"
-        cp $INST_PATH/u-boot-${BOARD}.imx /tftp
-        cp $INST_PATH/$IMAGE_NAME /tftp
+    if [[ -n "$INST_PATH" && -w $INST_PATH ]] ; then
+        pr_info "install bootloader and system image to '$INST_PATH'"
+        cp $PRFX_PATH/u-boot-${BOARD}.imx $INST_PATH
+        cp $PRFX_PATH/$IMAGE_NAME $INST_PATH
     fi
 }
 

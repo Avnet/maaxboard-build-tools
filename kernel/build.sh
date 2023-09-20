@@ -6,8 +6,11 @@ PRJ_PATH=$(cd $(dirname "${BASH_SOURCE[0]}") && pwd)
 # top project absolute path
 TOP_PATH=$(realpath $PRJ_PATH/..)
 
-# binaries install path
-INST_PATH=$PRJ_PATH/install
+# binaries build prefix install path
+PRFX_PATH=$PRJ_PATH/install
+
+# binaries finally install path if needed
+#INST_PATH=/tftp
 
 # config file path
 CONF_FILE=$TOP_PATH/config.json
@@ -88,7 +91,7 @@ function build_driver()
         cd mwifiex/mxm_wifiex/wlan_src/
 
         make -C $KER_PATH M=$PWD
-        make -C $KER_PATH M=$PWD modules_install INSTALL_MOD_PATH=$INST_PATH INSTALL_MOD_STRIP=1
+        make -C $KER_PATH M=$PWD modules_install INSTALL_MOD_PATH=$PRFX_PATH INSTALL_MOD_STRIP=1
     fi
 }
 
@@ -98,27 +101,27 @@ function do_install()
 
     cd $KER_PATH
 
-    if [ -d $INST_PATH ] ; then
-        rm -rf $INST_PATH/*
+    if [ -d $PRFX_PATH ] ; then
+        rm -rf $PRFX_PATH/*
     fi
-    mkdir -p $INST_PATH/overlays
+    mkdir -p $PRFX_PATH/overlays
 
     # Install image
-    cp arch/arm64/boot/Image $INST_PATH
-    cp arch/arm64/boot/dts/freescale/${BOARD}.dtb $INST_PATH
-    cp arch/arm64/boot/dts/freescale/${BOARD}/*.dtbo $INST_PATH/overlays
+    cp arch/arm64/boot/Image $PRFX_PATH
+    cp arch/arm64/boot/dts/freescale/${BOARD}.dtb $PRFX_PATH
+    cp arch/arm64/boot/dts/freescale/${BOARD}/*.dtbo $PRFX_PATH/overlays
 
     # Install kernel modules
-    make modules_install INSTALL_MOD_PATH=$INST_PATH INSTALL_MOD_STRIP=1
+    make modules_install INSTALL_MOD_PATH=$PRFX_PATH INSTALL_MOD_STRIP=1
 
     echo ""
-    pr_info "linux kernel installed to '$INST_PATH'"
-    ls $INST_PATH && echo ""
+    pr_info "linux kernel installed to '$PRFX_PATH'"
+    ls $PRFX_PATH && echo ""
 
-    if [ -w /tftp ] ; then
-        pr_info "install linux kernel to '/tftp'"
-        cp $INST_PATH/Image /tftp
-        cp $INST_PATH/${BOARD}.dtb /tftp
+    if [[ -n "$INST_PATH" && -w $INST_PATH ]] ; then
+        pr_info "install linux kernel to '$INST_PATH'"
+        cp $PRFX_PATH/Image $INST_PATH
+        cp $PRFX_PATH/${BOARD}.dtb $INST_PATH
     fi
 }
 
@@ -142,7 +145,7 @@ function do_clean()
         rm -rf $PRJ_PATH/$d
     done
 
-    rm -rf $INST_PATH
+    rm -rf $PRFX_PATH
 }
 
 #+-------------------------+

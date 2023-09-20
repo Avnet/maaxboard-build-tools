@@ -6,8 +6,11 @@ PRJ_PATH=$(cd $(dirname "${BASH_SOURCE[0]}") && pwd)
 # top project absolute path
 TOP_PATH=$(realpath $PRJ_PATH/..)
 
-# binaries install path
-INST_PATH=$PRJ_PATH/install
+# binaries build prefix install path
+PRFX_PATH=$PRJ_PATH/install
+
+# binaries finally install path if needed
+INST_PATH=/tftp
 
 # config file path
 CONF_FILE=$TOP_PATH/config.json
@@ -196,7 +199,7 @@ function build_cortexM()
     set -x
     cp $DEMO_BIN $MKIMG_BIN_PATH/m33_image.bin
     # For Yocto
-    cp $DEMO_BIN $INST_PATH/maaxboard_8ulp_m33_image.bin
+    cp $DEMO_BIN $PRFX_PATH/maaxboard_8ulp_m33_image.bin
     set +x
 }
 
@@ -308,14 +311,14 @@ function build_imxboot()
     cp $MKIMG_BIN_PATH/flash.bin u-boot-${BOARD}.imx
     chmod a+x u-boot-${BOARD}.imx
 
-    cp u-boot-${BOARD}.imx $INST_PATH
+    cp u-boot-${BOARD}.imx $PRFX_PATH
 }
 
 function do_build()
 {
     cd $PRJ_PATH
 
-    mkdir -p $INST_PATH
+    mkdir -p $PRFX_PATH
 
     build_atf
     build_cortexM
@@ -328,12 +331,12 @@ function do_install()
     cd $PRJ_PATH
 
     echo ""
-    pr_info "bootloader installed to '$INST_PATH'"
-    ls $INST_PATH && echo ""
+    pr_info "bootloader installed to '$PRFX_PATH'"
+    ls $PRFX_PATH && echo ""
 
-    if [ -w /tftp ] ; then
-        pr_info "install bootloader to '/tftp'"
-        cp $INST_PATH/u-boot-${BOARD}.imx /tftp
+    if [[ -n "$INST_PATH" && -w $INST_PATH ]] ; then
+        pr_info "install bootloader to '$INST_PATH'"
+        cp $PRFX_PATH/u-boot-${BOARD}.imx $INST_PATH
     fi
 }
 
@@ -345,7 +348,7 @@ function do_clean()
     done
 
     rm -rf $PRJ_PATH/firmware
-    rm -rf $INST_PATH
+    rm -rf $PRFX_PATH
 }
 
 #+-------------------------+
