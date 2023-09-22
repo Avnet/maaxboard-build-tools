@@ -103,8 +103,6 @@ function export_env()
     elif [ $BOARD = maaxboard-nano ]  ; then
         export UBOOT_OFFSET_SECTOR=64
     fi
-
-    pr_info "UBOOT_OFFSET_SECTOR=${UBOOT_OFFSET_SECTOR}"
 }
 
 function do_fetch()
@@ -147,7 +145,7 @@ function build_image()
 
     mkdir -p $MNT_POINT
 
-    pr_info "start generate empty system image"
+    pr_info "start generate ${IMAGE_SIZE}MB empty system image"
     dd if=/dev/zero of=${IMAGE_NAME} bs=1024k count=${IMAGE_SIZE} conv=sync
     chmod a+x ${IMAGE_NAME}
 
