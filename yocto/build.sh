@@ -9,8 +9,11 @@ PRJ_PATH=$(cd $(dirname "${BASH_SOURCE[0]}") && pwd)
 # top project absolute path
 TOP_PATH=$(realpath $PRJ_PATH/..)
 
-# binaries install path
-INST_PATH=$PRJ_PATH/install
+# binaries build prefix install path
+PRFX_PATH=$PRJ_PATH/install
+
+# binaries finally install path if needed
+INST_PATH=/tftp
 
 # config file path
 CONF_FILE=$TOP_PATH/config.json
@@ -108,22 +111,29 @@ function do_install()
     cd $YCT_PATH
 
     echo ""
-    pr_info "Yocto($YCT_VER) installed to '$INST_PATH'"
+    pr_info "Yocto($YCT_VER) installed to '$PRFX_PATH'"
 
-    mkdir -p ${INST_PATH}
-    cp $BUILD_DIR/tmp/deploy/images/$BOARD/$BB_TARGET-$BOARD-*.rootfs.tar.zst ${INST_PATH}/rootfs.tar.zst
-    cp $BUILD_DIR/tmp/deploy/images/$BOARD/imx-boot ${INST_PATH}/u-boot-${BOARD}.imx
-    chmod a+x ${INST_PATH}/u-boot-${BOARD}.imx
-    cp $BUILD_DIR/tmp/deploy/images/$BOARD/$BB_TARGET-$BOARD.wic.zst ${INST_PATH}
+    mkdir -p ${PRFX_PATH}
+    cp $BUILD_DIR/tmp/deploy/images/$BOARD/$BB_TARGET-$BOARD-*.rootfs.tar.zst ${PRFX_PATH}/rootfs.tar.zst
+    cp $BUILD_DIR/tmp/deploy/images/$BOARD/imx-boot ${PRFX_PATH}/u-boot-${BOARD}.imx
+    chmod a+x ${PRFX_PATH}/u-boot-${BOARD}.imx
+    cp $BUILD_DIR/tmp/deploy/images/$BOARD/$BB_TARGET-$BOARD.wic ${PRFX_PATH}
 
-    ls ${INST_PATH} && echo ""
+    pr_info "bootloader and system image installed to '$PRFX_PATH'"
+    ls ${PRFX_PATH} && echo ""
+
+    if [[ -n "$INST_PATH" && -w $INST_PATH ]] ; then
+        pr_info "install bootloader and system image to '$INST_PATH'"
+        cp $PRFX_PATH/u-boot-${BOARD}.imx $INST_PATH
+        cp $PRFX_PATH/$BB_TARGET-$BOARD.wic $INST_PATH
+    fi
 }
 
 function do_clean()
 {
     cd $PRJ_PATH
 
-    rm -rf $INST_PATH
+    rm -rf $PRFX_PATH
 }
 
 #+-------------------------+
