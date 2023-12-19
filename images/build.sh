@@ -100,7 +100,7 @@ function export_env()
 
     if [[ $BOARD = maaxboard ]] || [[ $BOARD = maaxboard-8ulp ]] || [[ $BOARD = maaxboard-mini ]] ; then
         export UBOOT_OFFSET_SECTOR=66
-    elif [ $BOARD = maaxboard-nano ]  ; then
+    elif [[ $BOARD = maaxboard-nano ]] || [[ $BOARD = maaxboard-osm93 ]] ; then
         export UBOOT_OFFSET_SECTOR=64
     fi
 }

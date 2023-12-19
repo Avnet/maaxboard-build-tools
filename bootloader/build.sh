@@ -60,8 +60,8 @@ function export_fmver()
 
     if [ $BOARD == maaxboard-8ulp ] ; then
         export FMWS="$FMW_IMX $FMW_SENTINEL $FMW_UPOWER"
-	elif [ $BOARD == maaxboard-osm93 ] ; then
-		export FMWS="$FMW_IMX $FMW_SENTINEL $FMW_UPOWER"
+    elif [ $BOARD == maaxboard-osm93 ] ; then
+        export FMWS="$FMW_IMX $FMW_SENTINEL $FMW_UPOWER"
     else
         export FMWS="$FMW_IMX"
     fi
@@ -118,8 +118,7 @@ function export_env()
         MKIMG_BIN_PATH=$PRJ_PATH/imx-mkimage/iMX8M/
 
     elif [ $BOARD == maaxboard-osm93 ] ; then
-		
-	SRCS="$SRCS mcore_sdk_93"
+
         ATF_PLATFORM=imx93
         IMX_BOOT_SOC_TARGET=iMX9
         IMXBOOT_TARGETS=flash_singleboot
@@ -188,60 +187,34 @@ function build_atf()
 function build_cortexM()
 {
     if [ $BOARD == maaxboard-8ulp ] ; then
-		DEMO_PATH=boards/evkmimx8ulp/multicore_examples/rpmsg_lite_str_echo_rtos/armgcc
-		DEMO_BIN=release/rpmsg_lite_str_echo_rtos.bin
+        DEMO_PATH=boards/evkmimx8ulp/multicore_examples/rpmsg_lite_str_echo_rtos/armgcc
+        DEMO_BIN=release/rpmsg_lite_str_echo_rtos.bin
 
-		if [ $BOARD != maaxboard-8ulp ] ; then
-			return ;
-		fi
+        if [ $BOARD != maaxboard-8ulp ] ; then
+            return ;
+        fi
 
-		SRC=mcore_sdk_8ulp
+        SRC=mcore_sdk_8ulp
 
-		pr_warn "start build $SRC"
+        pr_warn "start build $SRC"
 
-		cd $PRJ_PATH/${SRC}
-		cd $DEMO_PATH
+        cd $PRJ_PATH/${SRC}
+        cd $DEMO_PATH
 
-		export ARMGCC_DIR=$MCORE_COMPILE
+        export ARMGCC_DIR=$MCORE_COMPILE
 
-		#bash clean.sh
-		if [ ! -s $DEMO_BIN ] ; then
-			bash build_release.sh
-		fi
+        #bash clean.sh
+        if [ ! -s $DEMO_BIN ] ; then
+            bash build_release.sh
+        fi
 
-		set -x
-		cp $DEMO_BIN $MKIMG_BIN_PATH/m33_image.bin
-		# For Yocto
-		cp $DEMO_BIN $PRFX_PATH/maaxboard_8ulp_m33_image.bin
-		set +x
-	fi
-	
-	if [ $BOARD == maaxboard-osm93 ] ; then
-		#Reserve osm93-m33 cores for later use
-		return ;
-		DEMO_PATH=boards/mcimx93evk/multicore_examples/rpmsg_lite_str_echo_rtos/armgcc
-		DEMO_BIN=release/rpmsg_lite_str_echo_rtos.bin
+        set -x
+        cp $DEMO_BIN $MKIMG_BIN_PATH/m33_image.bin
+        # For Yocto
+        cp $DEMO_BIN $PRFX_PATH/maaxboard_8ulp_m33_image.bin
+        set +x
 
-		SRC=mcore_sdk_93
-
-		pr_warn "start build $SRC"
-
-		cd $PRJ_PATH/${SRC}
-		cd $DEMO_PATH
-
-		export ARMGCC_DIR=$MCORE_COMPILE
-
-		#bash clean.sh
-		if [ ! -s $DEMO_BIN ] ; then
-			bash build_release.sh
-		fi
-
-		set -x
-		cp $DEMO_BIN $MKIMG_BIN_PATH/m33_image.bin
-		# For Yocto
-		cp $DEMO_BIN $PRFX_PATH/maaxboard_osm93_m33_image.bin
-		set +x
-	fi
+    fi
 
 }
 
@@ -323,6 +296,15 @@ function build_imxboot()
         cp $FMW_PATH/firmware-upower-*/upower_${UPOWER_REV}.bin $MKIMG_BIN_PATH/upower.bin
         cp $FMW_PATH/firmware-sentinel-*/mx8ulp${REV}-ahab-container.img $MKIMG_BIN_PATH
 
+    elif [ $BOARD == maaxboard-osm93 ] ; then
+
+        cp $FMW_PATH/firmware-imx-*/firmware/ddr/synopsys/lpddr4_imem_1d*.bin $MKIMG_BIN_PATH
+        cp $FMW_PATH/firmware-imx-*/firmware/ddr/synopsys/lpddr4_dmem_1d*.bin $MKIMG_BIN_PATH
+        cp $FMW_PATH/firmware-imx-*/firmware/ddr/synopsys/lpddr4_imem_2d*.bin $MKIMG_BIN_PATH
+        cp $FMW_PATH/firmware-imx-*/firmware/ddr/synopsys/lpddr4_dmem_2d*.bin $MKIMG_BIN_PATH
+
+        cp $FMW_PATH/firmware-sentinel-*/mx93a0-ahab-container.img $MKIMG_BIN_PATH
+
     elif [ $BOARD == maaxboard ] ; then
 
         cp $FMW_PATH/firmware-imx-*/firmware/hdmi/cadence/signed_hdmi_imx8m.bin $MKIMG_BIN_PATH
@@ -344,14 +326,6 @@ function build_imxboot()
         cp $FMW_PATH/firmware-imx-*/firmware/ddr/synopsys/ddr4_dmem_1d*.bin $MKIMG_BIN_PATH
         cp $FMW_PATH/firmware-imx-*/firmware/ddr/synopsys/ddr4_imem_2d*.bin $MKIMG_BIN_PATH
         cp $FMW_PATH/firmware-imx-*/firmware/ddr/synopsys/ddr4_dmem_2d*.bin $MKIMG_BIN_PATH
-	elif [ $BOARD == maaxboard-osm93 ] ; then
-
-        cp $FMW_PATH/firmware-imx-*/firmware/ddr/synopsys/lpddr4_imem_1d*.bin $MKIMG_BIN_PATH
-        cp $FMW_PATH/firmware-imx-*/firmware/ddr/synopsys/lpddr4_dmem_1d*.bin $MKIMG_BIN_PATH
-        cp $FMW_PATH/firmware-imx-*/firmware/ddr/synopsys/lpddr4_imem_2d*.bin $MKIMG_BIN_PATH
-        cp $FMW_PATH/firmware-imx-*/firmware/ddr/synopsys/lpddr4_dmem_2d*.bin $MKIMG_BIN_PATH
-
-		cp $FMW_PATH/firmware-sentinel-*/mx93a0-ahab-container.img $MKIMG_BIN_PATH
 
     fi
 
