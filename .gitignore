@@ -1,0 +1,8 @@
+firmware/
+imx-atf/
+imx-mkimage/
+uboot-imx/
+linux-imx/
+rootfs-*/
+install/
+tarball/
