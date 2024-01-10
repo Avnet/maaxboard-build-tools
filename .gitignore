@@ -6,3 +6,6 @@ linux-imx/
 rootfs-*/
 install/
 tarball/
+mcore_sdk_8ulp/
+mcore_sdk_93/
+yocto/*-lf-*/

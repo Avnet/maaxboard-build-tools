@@ -91,7 +91,8 @@ function export_env()
 
     if [ $BOARD == maaxboard-8ulp ] ; then
 
-        SRCS="$SRCS mcore_sdk_8ulp"
+        MCORE_SDK=mcore_sdk_8ulp
+        SRCS="$SRCS $MCORE_SDK"
 
         # MaaXBoard-8ULP manufacture on 2023.09 using A2 silicon
         IMX_SOC_REV=A2
@@ -119,9 +120,12 @@ function export_env()
 
     elif [ $BOARD == maaxboard-osm93 ] ; then
 
+        MCORE_SDK=mcore_sdk_93
+        SRCS="$SRCS $MCORE_SDK"
+
         ATF_PLATFORM=imx93
         IMX_BOOT_SOC_TARGET=iMX9
-        IMXBOOT_TARGETS=flash_singleboot
+        IMXBOOT_TARGETS=flash_singleboot_m33
         IMXBOOT_DTB=imx93-11x11-evk.dtb
         MKIMG_BIN_PATH=$PRJ_PATH/imx-mkimage/iMX9/
 
@@ -187,35 +191,35 @@ function build_atf()
 function build_cortexM()
 {
     if [ $BOARD == maaxboard-8ulp ] ; then
-        DEMO_PATH=boards/evkmimx8ulp/multicore_examples/rpmsg_lite_str_echo_rtos/armgcc
-        DEMO_BIN=release/rpmsg_lite_str_echo_rtos.bin
-
-        if [ $BOARD != maaxboard-8ulp ] ; then
-            return ;
-        fi
-
-        SRC=mcore_sdk_8ulp
-
-        pr_warn "start build $SRC"
-
-        cd $PRJ_PATH/${SRC}
-        cd $DEMO_PATH
-
-        export ARMGCC_DIR=$MCORE_COMPILE
-
-        #bash clean.sh
-        if [ ! -s $DEMO_BIN ] ; then
-            bash build_release.sh
-        fi
-
-        set -x
-        cp $DEMO_BIN $MKIMG_BIN_PATH/m33_image.bin
-        # For Yocto
-        cp $DEMO_BIN $PRFX_PATH/maaxboard_8ulp_m33_image.bin
-        set +x
-
+        EVK=evkmimx8ulp
+    elif [ $BOARD == maaxboard-osm93 ] ; then
+        EVK=mcimx93evk
+    else
+        return 0;
     fi
 
+    SRC=$MCORE_SDK
+    DEMO_PATH=boards/$EVK/multicore_examples/rpmsg_lite_str_echo_rtos/armgcc
+    DEMO_BIN=release/rpmsg_lite_str_echo_rtos.bin
+    IMG_NAME=${BOARD/-/_}_m33_image.bin
+
+    pr_warn "start build $SRC"
+
+    cd $PRJ_PATH/${SRC}
+    cd $DEMO_PATH
+
+    export ARMGCC_DIR=$MCORE_COMPILE
+
+    #bash clean.sh
+    if [ ! -s $DEMO_BIN ] ; then
+        bash build_release.sh
+    fi
+
+    # For Yocto
+    set -x
+    cp $DEMO_BIN $MKIMG_BIN_PATH/m33_image.bin
+    cp $DEMO_BIN $PRFX_PATH/$IMG_NAME
+    set +x
 }
 
 function build_uboot()
@@ -298,34 +302,21 @@ function build_imxboot()
 
     elif [ $BOARD == maaxboard-osm93 ] ; then
 
-        cp $FMW_PATH/firmware-imx-*/firmware/ddr/synopsys/lpddr4_imem_1d*.bin $MKIMG_BIN_PATH
-        cp $FMW_PATH/firmware-imx-*/firmware/ddr/synopsys/lpddr4_dmem_1d*.bin $MKIMG_BIN_PATH
-        cp $FMW_PATH/firmware-imx-*/firmware/ddr/synopsys/lpddr4_imem_2d*.bin $MKIMG_BIN_PATH
-        cp $FMW_PATH/firmware-imx-*/firmware/ddr/synopsys/lpddr4_dmem_2d*.bin $MKIMG_BIN_PATH
-
+        cp $FMW_PATH/firmware-imx-*/firmware/ddr/synopsys/lpddr4_[id]mem_[12]d*.bin $MKIMG_BIN_PATH
         cp $FMW_PATH/firmware-sentinel-*/mx93a0-ahab-container.img $MKIMG_BIN_PATH
 
     elif [ $BOARD == maaxboard ] ; then
 
         cp $FMW_PATH/firmware-imx-*/firmware/hdmi/cadence/signed_hdmi_imx8m.bin $MKIMG_BIN_PATH
-        cp $FMW_PATH/firmware-imx-*/firmware/ddr/synopsys/ddr4_imem_1d*.bin $MKIMG_BIN_PATH
-        cp $FMW_PATH/firmware-imx-*/firmware/ddr/synopsys/ddr4_dmem_1d*.bin $MKIMG_BIN_PATH
-        cp $FMW_PATH/firmware-imx-*/firmware/ddr/synopsys/ddr4_imem_2d*.bin $MKIMG_BIN_PATH
-        cp $FMW_PATH/firmware-imx-*/firmware/ddr/synopsys/ddr4_dmem_2d*.bin $MKIMG_BIN_PATH
+        cp $FMW_PATH/firmware-imx-*/firmware/ddr/synopsys/ddr4_[id]mem_[12]d*.bin $MKIMG_BIN_PATH
 
     elif [ $BOARD == maaxboard-mini ] ; then
 
-        cp $FMW_PATH/firmware-imx-*/firmware/ddr/synopsys/ddr4_imem_1d*.bin $MKIMG_BIN_PATH
-        cp $FMW_PATH/firmware-imx-*/firmware/ddr/synopsys/ddr4_dmem_1d*.bin $MKIMG_BIN_PATH
-        cp $FMW_PATH/firmware-imx-*/firmware/ddr/synopsys/ddr4_imem_2d*.bin $MKIMG_BIN_PATH
-        cp $FMW_PATH/firmware-imx-*/firmware/ddr/synopsys/ddr4_dmem_2d*.bin $MKIMG_BIN_PATH
+        cp $FMW_PATH/firmware-imx-*/firmware/ddr/synopsys/ddr4_[id]mem_[12]d*.bin $MKIMG_BIN_PATH
 
     elif [ $BOARD == maaxboard-nano ] ; then
 
-        cp $FMW_PATH/firmware-imx-*/firmware/ddr/synopsys/ddr4_imem_1d*.bin $MKIMG_BIN_PATH
-        cp $FMW_PATH/firmware-imx-*/firmware/ddr/synopsys/ddr4_dmem_1d*.bin $MKIMG_BIN_PATH
-        cp $FMW_PATH/firmware-imx-*/firmware/ddr/synopsys/ddr4_imem_2d*.bin $MKIMG_BIN_PATH
-        cp $FMW_PATH/firmware-imx-*/firmware/ddr/synopsys/ddr4_dmem_2d*.bin $MKIMG_BIN_PATH
+        cp $FMW_PATH/firmware-imx-*/firmware/ddr/synopsys/ddr4_[id]mem_[12]d*.bin $MKIMG_BIN_PATH
 
     fi
 
