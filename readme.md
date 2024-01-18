@@ -8,6 +8,7 @@ The build system can support:
 * [MaaXBoard Mini](https://www.avnet.com/wps/portal/us/products/avnet-boards/avnet-board-families/maaxboard/maaxboard-mini)
 * [MaaXBoard 8ULP](https://www.avnet.com/wps/portal/us/products/avnet-boards/avnet-board-families/maaxboard/maaxboard-8ulp/)
 * [MaaXBoard Nano](https://www.avnet.com/wps/portal/us/products/avnet-boards/avnet-board-families/maaxboard/maaxboard-nano)
+* MaaXBoard OSM93
 
 
 
@@ -27,7 +28,7 @@ Codename:       focal
 Take **MaaXBoard 8ULP** for example, You can create the work space and fetch the build system tools.
 
 ```
-guowenxue@7eeebdd3d42f:~$ git clone git@192.168.2.100:imx8m/maaxboard-build-tools.git maaxboard-8ulp
+guowenxue@7eeebdd3d42f:~$ git clone https://github.com/Avnet/maaxboard-build-tools.git maaxboard-8ulp
 
 guowenxue@7eeebdd3d42f:~$ cd maaxboard-8ulp && ls
 bootloader  config.json  images  kernel  tools  yocto
@@ -87,7 +88,7 @@ guowenxue@7eeebdd3d42f:~/maaxboard-8ulp$ cat config.json
     "bsp":
     {
         "board":"maaxboard",
-        "version":"lf-6.1.1-1.0.0",
+        "version":"lf-6.1.22-2.0.0",
         "giturl":"https://github.com/Avnet/",
         "cortexAtool":"/opt/gcc-arm-10.3-2021.07/bin/aarch64-none-linux-gnu-",
         "cortexMtool":"/opt/gcc-arm-none-eabi-10.3-2021.07/"
@@ -95,7 +96,7 @@ guowenxue@7eeebdd3d42f:~/maaxboard-8ulp$ cat config.json
     "system":
     {
         "distro":"yocto",
-        "version":"langdale",
+        "version":"mickledore",
         "imgsize":"5120",
         "bootsize":"100"
     }
@@ -106,8 +107,8 @@ guowenxue@7eeebdd3d42f:~/maaxboard-8ulp$ cat config.json
 
 ***BSP(Board Support Package)*** configure options:
 
-* **board**      Set the MaaXBoard board name here, it should be ***maaxboard, maaxboard-mini, maaxboard-8ulp or maaxboard-nano***;
-* **version**   Set the BSP version, it support ***lf-6.1.1-1.0.0*** and ***lf-5.15.71-2.2.0*** till now;
+* **board**      Set the MaaXBoard board name here, it should be ***maaxboard, maaxboard-mini, maaxboard-8ulp, maaxboard-osm93 or maaxboard-nano***;
+* **version**   Set the BSP version, it support ***lf-6.1.22-2.0.0***, ***lf-6.1.1-1.0.0*** and ***lf-5.15.71-2.2.0*** till now;
 * **giturl**       MaaXBoard BSP source code git repository download URL;
 * **cortexAtool**   Set the cross compiler for Cortex-A with Linux;
 * **cortexMtool**   Set the cross compiler for Cortex-M with RTOS;
@@ -117,7 +118,7 @@ guowenxue@7eeebdd3d42f:~/maaxboard-8ulp$ cat config.json
 ***System*** configure options:
 
 * **distro**  The linux distribution, current only support **yocto**;
-* **version** The linux distribution version, current support ***langdale*** and  ***kirkstone*** for Yocto;
+* **version** The linux distribution version, current support ***mickledore***, ***langdale*** and  ***kirkstone*** for Yocto;
 * ***imgsize*** The generate system image size;
 * ***bootsize*** The boot partition size in system image;
 
@@ -161,7 +162,7 @@ guowenxue@7eeebdd3d42f:~/maaxboard-8ulp/bootloader$ ls install/
 u-boot-maaxboard-8ulp.imx
 ```
 
-* It will auto download [imx-atf](https://github.com/Avnet/imx-atf)、[imx-mkimage](https://github.com/Avnet/imx-mkimage)、[uboot-imx](https://github.com/Avnet/uboot-imx) from the git repository set in the configure file;
+* It will auto download [imx-atf](https://github.com/Avnet/imx-atf), [imx-mkimage](https://github.com/Avnet/imx-mkimage), [uboot-imx](https://github.com/Avnet/uboot-imx) from the git repository set in the configure file;
 * It will auto download firmware image files from NXP official site;
 * The build output bootloader image will be installed to foler ***bootloader/install/*** ;
 
@@ -199,7 +200,7 @@ You can run below command to start build Yocto.
 guowenxue@7eeebdd3d42f:~/maaxboard-8ulp$ cd yocto && ./build.sh
 
 guowenxue@7eeebdd3d42f:~/maaxboard-8ulp/yocto$ ls
-build.sh  install  langdale-lf-6.1.1-1.0.0
+build.sh  install  mickledore-lf-6.1.22-2.0.0
 
 guowenxue@7eeebdd3d42f:~/maaxboard-8ulp/yocto$ ls install/
 avnet-image-full-maaxboard-8ulp.wic.zst  rootfs.tar.zst  u-boot-maaxboard-8ulp.bin
@@ -221,10 +222,10 @@ You can run below command to start generate system image.
 guowenxue@7eeebdd3d42f:~/maaxboard-8ulp$ cd images && sudo ./build.sh
 
 guowenxue@7eeebdd3d42f:~/maaxboard-8ulp/images$ ls
-build.sh  install  rootfs-langdale
+build.sh  install  rootfs-mickledore
 
 guowenxue@7eeebdd3d42f:~/maaxboard-8ulp/images$ ls install/
-maaxboard-8ulp-langdale.img  u-boot-maaxboard-8ulp.imx
+maaxboard-8ulp-mickledore.img  u-boot-maaxboard-8ulp.imx
 ```
 
 * Build system image need **sudo** privilege;
@@ -239,7 +240,7 @@ maaxboard-8ulp-langdale.img  u-boot-maaxboard-8ulp.imx
 
 
 
-You can install the **imgmnt** tool to system patch ***/usr/bin***;
+You can install the **imgmnt** tool to system path ***/usr/bin***;
 
 ```
 guowenxue@7eeebdd3d42f:~/maaxboard-8ulp$ sudo cp tools/imgmnt /usr/bin/
@@ -251,13 +252,13 @@ guowenxue@7eeebdd3d42f:~/maaxboard-8ulp$ sudo chmod +x /usr/bin/imgmnt
 We can mount the system image by **imgmnt** command with **'-m'** option.
 
 ```
-guowenxue@7eeebdd3d42f:~/maaxboard-8ulp/images/install$ sudo imgmnt -m maaxboard-8ulp-langdale.img
-INFO: losetup /dev/loop0 maaxboard-8ulp-langdale.img
+guowenxue@7eeebdd3d42f:~/maaxboard-8ulp/images/install$ sudo imgmnt -m maaxboard-8ulp-mickledore.img
+INFO: losetup /dev/loop0 maaxboard-8ulp-mickledore.img
 INFO: kpartx -av /dev/loop0
 add map loop0p1 (253:0): 0 194560 linear 7:0 20480
 add map loop0p2 (253:1): 0 10270720 linear 7:0 215040
 INFO: mount boot rootfs
-INFO: mount maaxboard-8ulp-langdale.img done.
+INFO: mount maaxboard-8ulp-mickledore.img done.
 ```
 
 
@@ -284,13 +285,13 @@ After mount the system image on the linux system, now we can:
 We can unmount the system image by **imgmnt** command with **'-u'** option.
 
 ```
-guowenxue@7eeebdd3d42f:~/maaxboard-8ulp/images/install$ sudo imgmnt -u maaxboard-8ulp-langdale.img
+guowenxue@7eeebdd3d42f:~/maaxboard-8ulp/images/install$ sudo imgmnt -u maaxboard-8ulp-mickledore.img
 INFO: umount boot
 INFO: umount rootfs
 INFO: kpartx -dv /dev/loop0
 del devmap : loop0p1
 del devmap : loop0p2
 INFO: losetup -d /dev/loop0
-INFO: umount maaxboard-8ulp-langdale.img done.
+INFO: umount maaxboard-8ulp-mickledore.img done.
 ```
 

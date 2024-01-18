@@ -1,16 +1,16 @@
 {
     "bsp":
     {
-        "board":"maaxboard-osm93",
+        "board":"maaxboard",
         "version":"lf-6.1.22-2.0.0",
-        "giturl":"git@192.168.2.100:imx8m",
+        "giturl":"https://github.com/Avnet",
         "cortexAtool":"/opt/gcc-arm-10.3-2021.07/bin/aarch64-none-linux-gnu-",
         "cortexMtool":"/opt/gcc-arm-none-eabi-10.3-2021.07/"
     },
     "system":
     {
         "distro":"yocto",
-        "version":"langdale",
+        "version":"mickledore",
         "imgsize":"5120",
         "bootsize":"100"
     }
