@@ -120,12 +120,16 @@ function export_env()
 
     elif [ $BOARD == maaxboard-osm93 ] ; then
 
-        MCORE_SDK=mcore_sdk_93
+        #MCORE_SDK=mcore_sdk_93
         SRCS="$SRCS $MCORE_SDK"
 
         ATF_PLATFORM=imx93
         IMX_BOOT_SOC_TARGET=iMX9
-        IMXBOOT_TARGETS=flash_singleboot_m33
+        if [ -z $MCORE_SDK ] ; then
+            IMXBOOT_TARGETS=flash_singleboot
+        else
+            IMXBOOT_TARGETS=flash_singleboot_m33
+        fi
         IMXBOOT_DTB=imx93-11x11-evk.dtb
         MKIMG_BIN_PATH=$PRJ_PATH/imx-mkimage/iMX9/
 
@@ -193,6 +197,9 @@ function build_cortexM()
     if [ $BOARD == maaxboard-8ulp ] ; then
         EVK=evkmimx8ulp
     elif [ $BOARD == maaxboard-osm93 ] ; then
+        if [ -z $MCORE_SDK ] ; then
+            return 0;
+        fi
         EVK=mcimx93evk
     else
         return 0;
@@ -321,6 +328,7 @@ function build_imxboot()
     fi
 
     REV=`echo $IMX_SOC_REV | tr [a-z] [A-Z]`
+    pr_info "make SOC=$IMX_BOOT_SOC_TARGET REV=$REV $IMXBOOT_TARGETS"
     make SOC=$IMX_BOOT_SOC_TARGET REV=$REV $IMXBOOT_TARGETS
 
     cp $MKIMG_BIN_PATH/flash.bin u-boot-${BOARD}.imx
