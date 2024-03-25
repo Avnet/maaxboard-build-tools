@@ -92,6 +92,7 @@ function export_env()
     if [ $BOARD == maaxboard-8ulp ] ; then
 
         MCORE_SDK=mcore_sdk_8ulp
+        MCORE_EVK=evkmimx8ulp
         SRCS="$SRCS $MCORE_SDK"
 
         # MaaXBoard-8ULP manufacture on 2023.09 using A2 silicon
@@ -121,6 +122,7 @@ function export_env()
     elif [ $BOARD == maaxboard-osm93 ] ; then
 
         #MCORE_SDK=mcore_sdk_93
+        MCORE_EVK=mcimx93evk
         SRCS="$SRCS $MCORE_SDK"
 
         ATF_PLATFORM=imx93
@@ -194,19 +196,12 @@ function build_atf()
 
 function build_cortexM()
 {
-    if [ $BOARD == maaxboard-8ulp ] ; then
-        EVK=evkmimx8ulp
-    elif [ $BOARD == maaxboard-osm93 ] ; then
-        if [ -z $MCORE_SDK ] ; then
-            return 0;
-        fi
-        EVK=mcimx93evk
-    else
+    if [ -z "$MCORE_SDK" ] ; then
         return 0;
     fi
 
     SRC=$MCORE_SDK
-    DEMO_PATH=boards/$EVK/multicore_examples/rpmsg_lite_str_echo_rtos/armgcc
+    DEMO_PATH=boards/$MCORE_EVK/multicore_examples/rpmsg_lite_str_echo_rtos/armgcc
     DEMO_BIN=release/rpmsg_lite_str_echo_rtos.bin
     IMG_NAME=${BOARD/-/_}_m33_image.bin
 
