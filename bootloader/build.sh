@@ -121,7 +121,10 @@ function export_env()
 
     elif [ $BOARD == maaxboard-osm93 ] ; then
 
+        #If the current MaaXBoard-OSM93 version already supports machine learning,
+        #the M33 core compilation in U-Boot needs to be disabled.
         #MCORE_SDK=mcore_sdk_93
+
         MCORE_EVK=mcimx93evk
         SRCS="$SRCS $MCORE_SDK"
 
