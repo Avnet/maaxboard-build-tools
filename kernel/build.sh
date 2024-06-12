@@ -38,11 +38,17 @@ function pr_info() {
 function export_env()
 {
     export BOARD=`jq -r ".bsp.board" $CONF_FILE | tr 'A-Z' 'a-z'`
-    export BSP_VER=`jq -r ".bsp.version" $CONF_FILE | tr 'A-Z' 'a-z'`
+    export BSP_VER=`jq -r ".bsp.version" $CONF_FILE`
     export GIT_URL=`jq -r ".bsp.giturl" $CONF_FILE | tr 'A-Z' 'a-z'`
-    export CROSS_COMPILE=`jq -r ".bsp.cortexAtool" $CONF_FILE | tr 'A-Z' 'a-z'`
+    export BRANCH=`jq -r ".bsp.branch" $CONF_FILE`
+    export CROSS_COMPILE=`jq -r ".bsp.cortexAtool" $CONF_FILE`
 
-    export BRANCH=maaxboard_$BSP_VER
+    if [[ ! -n $BRANCH ]] || [[ $BRANCH == null ]] ; then
+        export BRANCH=maaxboard_$BSP_VER
+    else
+        export BSP_VER=$(echo $BRANCH | sed -E 's/.*(lf-[0-9]+\.[0-9]+\.[0-9]+-[0-9]+\.[0-9]+\.[0-9]+).*/\1/')
+    fi
+
     export KER_PATH=$PRJ_PATH/linux-imx
 
     export JOBS=`cat /proc/cpuinfo | grep processor | wc -l`
@@ -58,6 +64,7 @@ function build_kernel()
         pr_info "linux kernel source code fetched already"
     else
         pr_info "start fetch linux kernel source code"
+        pr_info "git clone $GIT_URL/linux-imx.git -b $BRANCH"
         git clone $GIT_URL/linux-imx.git -b $BRANCH
     fi
 

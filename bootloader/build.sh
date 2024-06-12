@@ -74,13 +74,19 @@ function export_fmver()
 function export_env()
 {
     export BOARD=`jq -r ".bsp.board" $CONF_FILE | tr 'A-Z' 'a-z'`
-    export BSP_VER=`jq -r ".bsp.version" $CONF_FILE | tr 'A-Z' 'a-z'`
+    export BSP_VER=`jq -r ".bsp.version" $CONF_FILE`
     export GIT_URL=`jq -r ".bsp.giturl" $CONF_FILE | tr 'A-Z' 'a-z'`
-    export CROSS_COMPILE=`jq -r ".bsp.cortexAtool" $CONF_FILE | tr 'A-Z' 'a-z'`
-    export MCORE_COMPILE=`jq -r ".bsp.cortexMtool" $CONF_FILE | tr 'A-Z' 'a-z'`
+    export BRANCH=`jq -r ".bsp.branch" $CONF_FILE`
+    export CROSS_COMPILE=`jq -r ".bsp.cortexAtool" $CONF_FILE`
+    export MCORE_COMPILE=`jq -r ".bsp.cortexMtool" $CONF_FILE`
+
+    if [[ ! -n $BRANCH ]] || [[ $BRANCH == null ]] ; then
+        export BRANCH=maaxboard_$BSP_VER
+    else
+        export BSP_VER=$(echo $BRANCH | sed -E 's/.*(lf-[0-9]+\.[0-9]+\.[0-9]+-[0-9]+\.[0-9]+\.[0-9]+).*/\1/')
+    fi
 
     export SRCS="imx-atf uboot-imx imx-mkimage"
-    export BRANCH=maaxboard_$BSP_VER
     export JOBS=`cat /proc/cpuinfo | grep processor | wc -l`
     export ARCH=arm
 
