@@ -44,14 +44,19 @@ function pr_info() {
 function export_env()
 {
     export BOARD=`jq -r ".bsp.board" $CONF_FILE | tr 'A-Z' 'a-z'`
-    export BSP_VER=`jq -r ".bsp.version" $CONF_FILE | tr 'A-Z' 'a-z'`
+    export BSP_VER=`jq -r ".bsp.version" $CONF_FILE`
     export GIT_URL=`jq -r ".bsp.giturl" $CONF_FILE | tr 'A-Z' 'a-z'`
+    export BRANCH=`jq -r ".bsp.branch" $CONF_FILE`
     export YCT_VER=`jq -r ".system.version" $CONF_FILE | tr 'A-Z' 'a-z'`
+
+    if [[ ! -n $BRANCH ]] || [[ $BRANCH == null ]] ; then
+        export BRANCH=maaxboard_$BSP_VER
+    else
+        export BSP_VER=$(echo $BRANCH | sed -E 's/.*(lf-[0-9]+\.[0-9]+\.[0-9]+-[0-9]+\.[0-9]+\.[0-9]+).*/\1/')
+    fi
 
     export YCT_PATH=$PRJ_PATH/$YCT_VER-$BSP_VER
     export BUILD_DIR=${BOARD}/build
-
-    export BRANCH=maaxboard_$BSP_VER
 }
 
 function do_fetch()
@@ -68,6 +73,7 @@ function do_fetch()
         fi
 
         BSP_VER=`echo $BSP_VER | sed 's/lf/imx/'`
+        pr_info "repo init -u https://github.com/nxp-imx/imx-manifest -b imx-linux-$YCT_VER -m $BSP_VER.xml"
         repo init -u https://github.com/nxp-imx/imx-manifest -b imx-linux-$YCT_VER -m $BSP_VER.xml
         repo sync && rm -f repo
 
