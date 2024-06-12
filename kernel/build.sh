@@ -83,7 +83,7 @@ function build_driver()
 {
     cd $PRJ_PATH
 
-    if [ $BOARD == "maaxboard-8ulp" ] ; then
+    if [ $BOARD == "maaxboard-8ulp" ] || [ $BOARD == "maaxboard-osm93" ]; then
         pr_info "Start build WiFi driver for $BOARD"
 
         WIFI_BRANCH=`echo $BSP_VER | sed 's/-/_/2'`
