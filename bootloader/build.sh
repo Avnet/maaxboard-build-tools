@@ -37,7 +37,13 @@ function pr_info() {
 # select firmware version by BSP version
 function export_fmver()
 {
-    if [[ $BSP_VER =~ 6.1.22 ]] ;  then
+    if [[ $BSP_VER =~ 6.6.3 ]] ;  then
+
+        export FMW_IMX=firmware-imx-8.23
+        export FMW_SENTINEL=firmware-sentinel-0.11
+        export FMW_UPOWER=firmware-upower-1.3.0
+
+    elif [[ $BSP_VER =~ 6.1.22 ]] ;  then
 
         export FMW_IMX=firmware-imx-8.20
         export FMW_SENTINEL=firmware-sentinel-0.10
@@ -131,18 +137,26 @@ function export_env()
         #the M33 core compilation in U-Boot needs to be disabled.
         #MCORE_SDK=mcore_sdk_93
 
-        MCORE_EVK=mcimx93evk
+        IMX_SOC_REV=A1
         SRCS="$SRCS $MCORE_SDK"
 
+        MCORE_EVK=mcimx93evk
         ATF_PLATFORM=imx93
-        IMX_BOOT_SOC_TARGET=iMX9
+        IMXBOOT_DTB=imx93-11x11-evk.dtb
+
         if [ -z $MCORE_SDK ] ; then
             IMXBOOT_TARGETS=flash_singleboot
         else
             IMXBOOT_TARGETS=flash_singleboot_m33
         fi
-        IMXBOOT_DTB=imx93-11x11-evk.dtb
-        MKIMG_BIN_PATH=$PRJ_PATH/imx-mkimage/iMX9/
+
+        if [ $IMX_SOC_REV == A0 ] ; then
+            IMX_BOOT_SOC_TARGET=iMX9
+            MKIMG_BIN_PATH=$PRJ_PATH/imx-mkimage/iMX9/
+        elif [ $IMX_SOC_REV == A1 ] ; then
+             IMX_BOOT_SOC_TARGET=iMX93
+             MKIMG_BIN_PATH=$PRJ_PATH/imx-mkimage/iMX93/
+        fi
 
     elif [ $BOARD == maaxboard ] ; then
 
@@ -314,7 +328,11 @@ function build_imxboot()
     elif [ $BOARD == maaxboard-osm93 ] ; then
 
         cp $FMW_PATH/firmware-imx-*/firmware/ddr/synopsys/lpddr4_[id]mem_[12]d*.bin $MKIMG_BIN_PATH
-        cp $FMW_PATH/firmware-sentinel-*/mx93a0-ahab-container.img $MKIMG_BIN_PATH
+        if [ $IMX_SOC_REV == A0 ] ; then
+            cp $FMW_PATH/firmware-sentinel-*/mx93a0-ahab-container.img $MKIMG_BIN_PATH
+        elif [ $IMX_SOC_REV == A1 ] ; then
+            cp $FMW_PATH/firmware-sentinel-*/mx93a1-ahab-container.img $MKIMG_BIN_PATH
+        fi
 
     elif [ $BOARD == maaxboard ] ; then
 
