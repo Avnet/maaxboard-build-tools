@@ -19,7 +19,7 @@ INST_PATH=/tftp
 CONF_FILE=$TOP_PATH/config.json
 
 # Download path
-#DL_PATH="/srv/ftp/yocto/oe-sources-langdale/"
+#DL_PATH="/srv/ftp/yocto/"
 
 # shell script will exit once get command error
 set -e
@@ -105,8 +105,8 @@ function do_build()
     fi
 
     if [[ -n "$DL_PATH" ]] ; then
-        sed -i "s|^#DL_DIR.*|DL_DIR ?= \"$DL_PATH\"|g" conf/local.conf
-        sed -i "s|^DL_DIR.*|DL_DIR ?= \"$DL_PATH\"|g" conf/local.conf
+        sed -i "s|^#DL_DIR.*|DL_DIR ?= \"$DL_PATH/$YCT_VER\"|g" conf/local.conf
+        sed -i "s|^DL_DIR.*|DL_DIR ?= \"$DL_PATH/$YCT_VER\"|g" conf/local.conf
     fi
 
     bitbake $BB_TARGET
@@ -120,10 +120,12 @@ function do_install()
     pr_info "Yocto($YCT_VER) installed to '$PRFX_PATH'"
 
     mkdir -p ${PRFX_PATH}
-    cp $BUILD_DIR/tmp/deploy/images/$BOARD/$BB_TARGET-$BOARD-*.rootfs.tar.zst ${PRFX_PATH}/rootfs.tar.zst
+    cp $BUILD_DIR/tmp/deploy/images/$BOARD/$BB_TARGET-$BOARD*.rootfs.tar.zst ${PRFX_PATH}/rootfs.tar.zst
     cp $BUILD_DIR/tmp/deploy/images/$BOARD/imx-boot ${PRFX_PATH}/u-boot-${BOARD}.imx
     chmod a+x ${PRFX_PATH}/u-boot-${BOARD}.imx
-    cp $BUILD_DIR/tmp/deploy/images/$BOARD/$BB_TARGET-$BOARD.wic ${PRFX_PATH}
+
+    wic_img=$(ls $BUILD_DIR/tmp/deploy/images/$BOARD/${BB_TARGET}-${BOARD}*.wic | grep '[0-9]\{14\}')
+    cp $wic_img ${PRFX_PATH}/$BB_TARGET-$BOARD.wic
 
     pr_info "bootloader and system image installed to '$PRFX_PATH'"
     ls ${PRFX_PATH} && echo ""
