@@ -187,10 +187,10 @@ function build_image()
         cp $ROOTFS/boot/readme.txt ${MNT_POINT}/
     fi
 
-    if [ -f $ROOTFS/boot/uEnv.txt ] ; then
-        cp $ROOTFS/boot/uEnv.txt ${MNT_POINT}/
-    elif [ -f $PRJ_PATH/conf/$BOARD/uEnv.txt ] ; then
+    if [ -f $PRJ_PATH/conf/$BOARD/uEnv.txt ] ; then
         cp $PRJ_PATH/conf/$BOARD/uEnv.txt ${MNT_POINT}/
+    elif [ -f $ROOTFS/boot/uEnv.txt ] ; then
+        cp $ROOTFS/boot/uEnv.txt ${MNT_POINT}/
     fi
 
     sync && umount ${MNT_POINT}
@@ -207,6 +207,11 @@ function build_image()
     if [ -f $PRJ_PATH/conf/$BOARD/asound.state ] ; then
         cp $PRJ_PATH/conf/$BOARD/asound.state $ROOTFS/var/lib/alsa/asound.state
     fi
+
+    pr_info "update hostname in root filesystem"
+    hostname=$(echo "$BOARD" | sed 's/-//g')
+    sed -i "s/maaxboard.*/${hostname}/g" $ROOTFS/etc/hostname
+    sed -i "s/maaxboard.*/${hostname}/g" $ROOTFS/etc/hosts
 
     pr_info "start install root filesystem"
     mount -t ext4 /dev/mapper/${LOOP_DEV}p2 ${MNT_POINT}
