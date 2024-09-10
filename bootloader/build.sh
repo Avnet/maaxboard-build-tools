@@ -41,7 +41,8 @@ function export_fmver()
 
         export FMW_IMX=firmware-imx-8.23
         export FMW_SENTINEL=firmware-sentinel-0.11
-        export FMW_UPOWER=firmware-upower-1.3.0
+        export FMW_UPOWER=firmware-upower-1.3.1
+        export FMW_SENTINEL=firmware-ele-imx-0.1.1
 
     elif [[ $BSP_VER =~ 6.1.22 ]] ;  then
 
@@ -331,7 +332,7 @@ function build_imxboot()
         if [ $IMX_SOC_REV == A0 ] ; then
             cp $FMW_PATH/firmware-sentinel-*/mx93a0-ahab-container.img $MKIMG_BIN_PATH
         elif [ $IMX_SOC_REV == A1 ] ; then
-            cp $FMW_PATH/firmware-sentinel-*/mx93a1-ahab-container.img $MKIMG_BIN_PATH
+            cp $FMW_PATH/firmware-ele-imx-*/mx93a1-ahab-container.img $MKIMG_BIN_PATH
         fi
 
     elif [ $BOARD == maaxboard ] ; then
