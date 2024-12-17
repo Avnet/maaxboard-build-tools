@@ -95,7 +95,11 @@ function build_driver()
             pr_info "wifi driver source code fetched already"
         fi
 
-        cd mwifiex/mxm_wifiex/wlan_src/
+        if [ -d mwifiex/mxm_wifiex/wlan_src/ ] ; then
+            cd mwifiex/mxm_wifiex/wlan_src/
+        else
+            cd mwifiex
+        fi
 
         make -C $KER_PATH M=$PWD
         make -C $KER_PATH M=$PWD modules_install INSTALL_MOD_PATH=$PRFX_PATH INSTALL_MOD_STRIP=1
@@ -116,7 +120,10 @@ function do_install()
     # Install image
     cp arch/arm64/boot/Image $PRFX_PATH
     cp arch/arm64/boot/dts/freescale/${BOARD}.dtb $PRFX_PATH
-    cp arch/arm64/boot/dts/freescale/${BOARD}/*.dtbo $PRFX_PATH/overlays
+
+    if [ -d arch/arm64/boot/dts/freescale/${BOARD} ] ; then
+        cp arch/arm64/boot/dts/freescale/${BOARD}/*.dtbo $PRFX_PATH/overlays
+    fi
 
     # Install kernel modules
     make modules_install INSTALL_MOD_PATH=$PRFX_PATH INSTALL_MOD_STRIP=1
