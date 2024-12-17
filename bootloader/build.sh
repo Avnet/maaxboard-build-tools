@@ -37,10 +37,15 @@ function pr_info() {
 # select firmware version by BSP version
 function export_fmver()
 {
-    if [[ $BSP_VER =~ 6.6.3 ]] ;  then
+    if [[ $BSP_VER =~ 6.6.36 ]] ;  then
+
+        export FMW_IMX=firmware-imx-8.25-27879f8
+        export FMW_UPOWER=firmware-upower-1.3.1
+        export FMW_SENTINEL=firmware-ele-imx-0.1.3-4b30ee5
+
+    elif [[ $BSP_VER =~ 6.6.3 ]] ;  then
 
         export FMW_IMX=firmware-imx-8.23
-        export FMW_SENTINEL=firmware-sentinel-0.11
         export FMW_UPOWER=firmware-upower-1.3.1
         export FMW_SENTINEL=firmware-ele-imx-0.1.1
 
@@ -323,8 +328,8 @@ function build_imxboot()
         else
             UPOWER_REV=a0
         fi
-        cp $FMW_PATH/firmware-upower-*/upower_${UPOWER_REV}.bin $MKIMG_BIN_PATH/upower.bin
-        cp $FMW_PATH/firmware-sentinel-*/mx8ulp${REV}-ahab-container.img $MKIMG_BIN_PATH
+        cp $FMW_PATH/$FMW_UPOWER/upower_${UPOWER_REV}.bin $MKIMG_BIN_PATH/upower.bin
+        cp $FMW_PATH/$FMW_SENTINEL/mx8ulp${REV}-ahab-container.img $MKIMG_BIN_PATH
 
     elif [ $BOARD == maaxboard-osm93 ] ; then
 
