@@ -12,6 +12,7 @@
     {
         "distro":"yocto",
         "version":"mickledore",
+        "branch":"",
         "imgsize":"5120",
         "bootsize":"100"
     }

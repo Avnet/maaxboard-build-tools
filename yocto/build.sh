@@ -48,6 +48,7 @@ function export_env()
     export GIT_URL=`jq -r ".bsp.giturl" $CONF_FILE | tr 'A-Z' 'a-z'`
     export BRANCH=`jq -r ".bsp.branch" $CONF_FILE`
     export YCT_VER=`jq -r ".system.version" $CONF_FILE | tr 'A-Z' 'a-z'`
+    export META_MAAXBOARD_BRANCH=`jq -r ".system.branch" $CONF_FILE`
 
     if [[ ! -n $BRANCH ]] || [[ $BRANCH == null ]] ; then
         export BRANCH=maaxboard_$BSP_VER
@@ -86,7 +87,12 @@ function do_fetch()
 
         cd sources
 
-        git clone $GIT_URL/meta-maaxboard.git -b $YCT_VER
+        if [[ ! -n $META_MAAXBOARD_BRANCH ]] || [[ $META_MAAXBOARD_BRANCH == null ]] ; then
+            git clone $GIT_URL/meta-maaxboard.git -b $YCT_VER
+        else
+            git clone $GIT_URL/meta-maaxboard.git -b $META_MAAXBOARD_BRANCH
+        fi
+
     else
         pr_warn "Yocto meta-maaxboard fetched already"
     fi
