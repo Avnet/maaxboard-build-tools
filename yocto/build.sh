@@ -116,6 +116,7 @@ function do_build()
     fi
 
     bitbake $BB_TARGET
+    #bitbake -c populate_sdk $BB_TARGET
 }
 
 function do_install()
